@@ -1,0 +1,21 @@
+{
+    "author": "nicolas.talabot@epfl.ch",
+    "dependencies": {},
+    "keywords": [],
+    "name": "benjamin_fft",
+    "pebble": {
+        "displayName": "Benjamin_FFt",
+        "enableMultiJS": true,
+        "messageKeys": [],
+        "projectType": "native",
+        "resources": {
+            "media": []
+        },
+        "sdkVersion": "3",
+        "uuid": "69eca0da-f4b6-4626-a1d4-8bc4d885e797",
+        "watchapp": {
+            "watchface": false
+        }
+    },
+    "version": "1.0.0"
+}
