@@ -141,22 +141,54 @@ uint16_t step_count(short steps[]){
     num_edges1 = (num_edges+1)/2;
     num_edges2 = (num_edges-1)/2; // NICO ditto
  }
+
   short edges1[num_edges1];
   short edges2[num_edges2];
+  short sum1 = 0, sum2 = 0;
+
   // Separate edges in the 2 arrays
   for (int i = 0; i<num_edges-1 ; i++){
     if (fmod(i,2) == 0){
       edges1[i/2] = edges[i]; 
+      sum1 += edges[i];
     }
     else{
       edges2[(i-1)/2] = edges[i];
+      sum2 += edges[i];
     }
   }
            
-           // TODO ADD SUM BEFORE OF EDGES, COUNT STEPSSSS
-  edges1[0] = 0;  // Ignore, just here to avoid an error
-  edges2[0] = 0;
-  return edges1[0] + edges2[0]; // NICO to avoid a compilation error
+  short mean1, mean2, val1, val2;
+  mean1 = sum1/num_edges1;
+  mean2 = sum2/num_edges2;
+
+  float fixed1, fixed2, threshold; // NOT SURE CLOUD PEBBLE LIKES FLOATS...
+
+  fixed1 = 0.0084;
+  fixed2 = 0.076;
+
+
+  // Check if conditions for counting steps are verified and count steps
+  for (i = 1 ; i < num_edges ; i++){
+    if (i == 0){
+      val1 = 0; 
+    }
+    else{
+      val1 = edges[i-1];
+    }
+    val2 = edges[i];
+    if (fabs(mean1-mean2)*0.25 > fixed1){
+      threshold = fabs(mean1-mean2)*0.25;
+    }
+    else{
+      threshold = fixed2;
+    }
+
+    if(fabs(val2-val1) > threshold){
+      steps += 1;
+    }
+  }
+  return steps;
 }
 
 static void accel_data_handler(AccelData *data, uint32_t num_samples){
