@@ -131,6 +131,42 @@ uint16_t step_count(short steps[], uint16_t num_samples){
     }
   }
   
+ //Function that filters given sample array and modifies it with new filtered values 
+void filter_samples(short* samples, uint16_t num_samples){
+  short fr[num_samples], fi[num_samples];
+  int M, lowerbound; // M is the power of 2 that gives us the number of samples we have. lowerbound is when we start to filter
+  // Copy sample values in table and initialise fi
+  for (int i = 0; i < num_samples ;i++){
+    fr[i] = samples[i];
+    fi[¡] = 0;
+  }
+
+  // Lowerbound is ceiling of 0.05*num_samples
+  switch(num_samples){
+    case(32) : M = 5; lowerbound = 2;  break;
+    case(64) : M = 6; lowerbound = 4;  break;
+    case(128) : M = 7; lowerbound = 7;  break;
+    case(254) : M = 8; lowerbound = 13; break;
+  }
+
+  // Do the fft
+  fix_fft(fr,fi,M,0);
+
+  // Filter depending on the lowerbound 
+  for (int i = lowerbound; i < num_samples ;i++){
+    fr[i] = 0;
+    fi[i] = 0;
+  }
+
+  // Do inverse fft to get filtered samples
+  fix_fft(fr,fr,M,1);
+
+  // Give values back to samples array. Imaginary part is added because it seems closer to what we want
+  for (int i = 0 ; i < num_samples ; i++){
+    samples[i] = fabs(fr[i] + fi[i]);
+  }
+}
+
   // Create edges array to stock top and bottom edges separatly
   if(fmod(num_edges,2) == 0){
     num_edges1 = num_edges/2;
