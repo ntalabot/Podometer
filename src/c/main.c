@@ -113,9 +113,8 @@ void four1(double data[], int nn, int isign)
 }
 */
 
-// Given the filtered samples for the steps, returns the number of steps counted
-uint16_t step_count(short steps[]){
-  uint16_t num_samples = sizeof(steps)/sizeof(steps);
+// Given the filtered samples for the steps and their number, returns the number of steps counted
+uint16_t step_count(short steps[], uint16_t num_samples){
   uint16_t num_edges = 0;
   uint16_t num_steps = 0;
   short edges[num_samples]; // used to be = {};
@@ -169,7 +168,7 @@ uint16_t step_count(short steps[]){
 
 
   // Check if conditions for counting steps are verified and count steps
-  for (i = 1 ; i < num_edges ; i++){
+  for (int i = 1 ; i < num_edges ; i++){
     if (i == 0){
       val1 = 0; 
     }
