@@ -185,10 +185,10 @@ uint16_t step_count(short steps[]){
     }
 
     if(fabs(val2-val1) > threshold){
-      steps += 1;
+      num_steps += 1;
     }
   }
-  return steps;
+  return num_steps;
 }
 
 static void accel_data_handler(AccelData *data, uint32_t num_samples){
