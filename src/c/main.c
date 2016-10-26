@@ -138,7 +138,7 @@ void filter_samples(short* samples, uint16_t num_samples){
   // Copy sample values in table and initialise fi
   for (int i = 0; i < num_samples ;i++){
     fr[i] = samples[i];
-    fi[¡] = 0;
+    fi[i] = 0;
   }
 
   // Lowerbound is ceiling of 0.05*num_samples
@@ -177,18 +177,18 @@ void filter_samples(short* samples, uint16_t num_samples){
     num_edges2 = (num_edges-1)/2; // NICO ditto
  }
 
-  short edges1[num_edges1];
-  short edges2[num_edges2];
+  //short edges1[num_edges1]; ********************
+  //short edges2[num_edges2]; ********************
   short sum1 = 0, sum2 = 0;
 
   // Separate edges in the 2 arrays
   for (int i = 0; i<num_edges-1 ; i++){
     if (fmod(i,2) == 0){
-      edges1[i/2] = edges[i]; 
+      //edges1[i/2] = edges[i]; *****************
       sum1 += edges[i];
     }
     else{
-      edges2[(i-1)/2] = edges[i];
+      //edges2[(i-1)/2] = edges[i]; *************
       sum2 += edges[i];
     }
   }
