@@ -28,147 +28,39 @@ Good luck and have fun!
 #include <stdlib.h>
 #include "integer_fft.h"
 
+#define X            0      //
+#define Y            1      // Used for the array "datas"
+#define Z            2      //
+#define NUM_SAMPLES  16     // Value of num_samples
+#define MAX_COUNTER  7      // Number of num_samples data_block to send for computation
+#define SIZE_DATA    NUM_SAMPLES*(MAX_COUNTER+1)  // size of the data for step computation
+
 // Declare the main window and two text layers
 Window *main_window;
 TextLayer *background_layer;
 TextLayer *helloWorld_layer;
 
-/************************************************
-* FFT code from the book Numerical Recipes in C *
-* Visit www.nr.com for the licence.             *
-************************************************/
-
-// The following line must be defined before including math.h to correctly define M_PI
-#define _USE_MATH_DEFINES
-#define M_PI        3.14159265358979323846264338327950288   /* pi */
-
-#define PI      M_PI    /* pi to machine precision, defined in math.h */
-#define TWOPI   (2.0*PI)
-
-/*
- FFT/IFFT routine. (see pages 507-508 of Numerical Recipes in C)
-
- Inputs:
-        data[] : array of complex* data points of size 2*NFFT+1.
-                data[0] is unused,
-                * the n'th complex number x(n), for 0 <= n <= length(x)-1, is stored as:
-                        data[2*n+1] = real(x(n))
-                        data[2*n+2] = imag(x(n))
-                if length(Nx) < NFFT, the remainder of the array must be padded with zeros
-
-        nn : FFT order NFFT. This MUST be a power of 2 and >= length(x).
-        isign:  if set to 1, 
-                                computes the forward FFT
-                        if set to -1, 
-                                computes Inverse FFT - in this case the output values have
-                                to be manually normalized by multiplying with 1/NFFT.
- Outputs:
-        data[] : The FFT or IFFT results are stored in data, overwriting the input.
-*/
-/*
-void four1(double data[], int nn, int isign)
-{
-    int n, mmax, m, j, istep, i;
-    double wtemp, wr, wpr, wpi, wi, theta;
-    double tempr, tempi;
-    
-    n = nn << 1;
-    j = 1;
-    for (i = 1; i < n; i += 2) {
-        if (j > i) {
-            tempr = data[j];     data[j] = data[i];     data[i] = tempr;
-            tempr = data[j+1]; data[j+1] = data[i+1]; data[i+1] = tempr;
-        }
-        m = n >> 1;
-        while (m >= 2 && j > m) {
-            j -= m;
-            m >>= 1;
-        }
-        j += m;
-    }
-    mmax = 2;
-    while (n > mmax) {
-        istep = 2*mmax;
-        theta = TWOPI/(isign*mmax);
-        wtemp = sin(0.5*theta);
-        wpr = -2.0*wtemp*wtemp;
-        wpi = sin(theta);
-        wr = 1.0;
-        wi = 0.0;
-        for (m = 1; m < mmax; m += 2) {
-            for (i = m; i <= n; i += istep) {
-                j =i + mmax;
-                tempr = wr*data[j]   - wi*data[j+1];
-                tempi = wr*data[j+1] + wi*data[j];
-                data[j]   = data[i]   - tempr;
-                data[j+1] = data[i+1] - tempi;
-                data[i] += tempr;
-                data[i+1] += tempi;
-            }
-            wr = (wtemp = wr)*wpr - wi*wpi + wr;
-            wi = wi*wpr + wtemp*wpi + wi;
-        }
-        mmax = istep;
-    }
-}
-*/
-
 // Given the filtered samples for the steps and their number, returns the number of steps counted
-uint16_t step_count(short steps[], uint16_t num_samples){
+static uint16_t step_count(int steps[]){
   uint16_t num_edges = 0;
   uint16_t num_steps = 0;
-  short edges[num_samples]; // used to be = {};
+  short edges[SIZE_DATA]; // used to be = {};
   int16_t sign1,sign2;
   int16_t num_edges1 = 0;
   int16_t num_edges2 = 0; 
   // Count and store number of edges in the signal
-  for (int i = 0 ; i < num_samples -3 ; ++i){
+  for (int i = 0 ; i < SIZE_DATA -3 ; ++i)
+  {
     sign1 = steps[1+i]-steps[i];
     sign2 = steps[2+i]-steps[1+i];
-    if (sign1*sign2 < 0){
+    if (sign1*sign2 < 0)
+    {
       edges[num_edges] = steps[1+i];
       num_edges += 1;
     }
   }
-  
- //Function that filters given sample array and modifies it with new filtered values 
-void filter_samples(short* samples, uint16_t num_samples){
-  short fr[num_samples], fi[num_samples];
-  int M, lowerbound; // M is the power of 2 that gives us the number of samples we have. lowerbound is when we start to filter
-  // Copy sample values in table and initialise fi
-  for (int i = 0; i < num_samples ;i++){
-    fr[i] = samples[i];
-    fi[i] = 0;
-  }
-
-  // Lowerbound is ceiling of 0.05*num_samples
-  switch(num_samples){
-    case(32) : M = 5; lowerbound = 2;  break;
-    case(64) : M = 6; lowerbound = 4;  break;
-    case(128) : M = 7; lowerbound = 7;  break;
-    case(254) : M = 8; lowerbound = 13; break;
-  }
-
-  // Do the fft
-  fix_fft(fr,fi,M,0);
-
-  // Filter depending on the lowerbound 
-  for (int i = lowerbound; i < num_samples ;i++){
-    fr[i] = 0;
-    fi[i] = 0;
-  }
-
-  // Do inverse fft to get filtered samples
-  fix_fft(fr,fr,M,1);
-
-  // Give values back to samples array. Imaginary part is added because it seems closer to what we want
-  for (int i = 0 ; i < num_samples ; i++){
-    samples[i] = fabs(fr[i] + fi[i]);
-  }
-}
-
-  // Create edges array to stock top and bottom edges separatly
-  if(fmod(num_edges,2) == 0){
+// Create edges array to stock top and bottom edges separatly
+  if((num_edges % 2) == 0){    // Used to be fmod(num_edges,2)
     num_edges1 = num_edges/2;
     num_edges2 = num_edges/2;    // NICO need to declare the variables before so i moved the declarations
   }
@@ -183,7 +75,7 @@ void filter_samples(short* samples, uint16_t num_samples){
 
   // Separate edges in the 2 arrays
   for (int i = 0; i<num_edges-1 ; i++){
-    if (fmod(i,2) == 0){
+    if ((i % 2) == 0){  // Used to be fmod(i,2)
       //edges1[i/2] = edges[i]; *****************
       sum1 += edges[i];
     }
@@ -197,10 +89,10 @@ void filter_samples(short* samples, uint16_t num_samples){
   mean1 = sum1/num_edges1;
   mean2 = sum2/num_edges2;
 
-  float fixed1, fixed2, threshold; // NOT SURE CLOUD PEBBLE LIKES FLOATS...
+  int fixed1, fixed2, threshold; // NOT SURE CLOUD PEBBLE LIKES FLOATS... -> I tried with int
 
-  fixed1 = 0.0084;
-  fixed2 = 0.076;
+  fixed1 = 8400; // old value = 0.0084
+  fixed2 = 76000; // old value = 0.076
 
 
   // Check if conditions for counting steps are verified and count steps
@@ -226,37 +118,90 @@ void filter_samples(short* samples, uint16_t num_samples){
   return num_steps;
 }
 
-static void accel_data_handler(AccelData *data, uint32_t num_samples){
-  // Read samples values
-  int16_t x = data[9].x;
-  int16_t y = data[9].y;
-  int16_t z = data[9].z;
-  
- /* float xf = x/10;
-  float yf = y/10;
-  float zf = z/10;*/
-  
-  // Create string to store results
-  static char results[60];
-  
-  // Log results
+//Function that filters given sample array and modifies it with new filtered values 
+static void filter_samples(int* samples) {
+  short fr[SIZE_DATA], fi[SIZE_DATA];
+  int M, lowerbound; // M is the power of 2 that gives us the number of samples we have. lowerbound is when we start to filter
+  // Copy sample values in table and initialise fi
+  for (int i = 0; i < SIZE_DATA ;i++){
+    fr[i] = samples[i];
+    fi[i] = 0;
+  }
 
-  // Calculate acceleration norm
-  int16_t acc2 = (x*x+y*y+z*z);
-  
-  
-  // Can't print floats!!!
-//  APP_LOG(APP_LOG_LEVEL_INFO,"x: %f, y: %f, z: %f \n %d",xf,yf,zf, acc2);
+  // Lowerbound is ceiling of 0.05*num_samples
+  switch(SIZE_DATA){
+    case(32) : M = 5; lowerbound = 2;  break;
+    case(64) : M = 6; lowerbound = 4;  break;
+    case(128) : M = 7; lowerbound = 7;  break;
+    case(254) : M = 8; lowerbound = 13; break;
+  }
 
-  // Print results
-  snprintf(results,60,"Acc : %d",acc2);
-  text_layer_set_text(helloWorld_layer, results);
+  // Do the fft
+  fix_fft(fr,fi,M,0);
+
+  // Filter depending on the lowerbound 
+  for (int i = lowerbound; i < SIZE_DATA ;i++){
+    fr[i] = 0;
+    fi[i] = 0;
+  }
+
+  // Do inverse fft to get filtered samples
+  fix_fft(fr,fr,M,1);
+
+  // Give values back to samples array. Imaginary part is added because it seems closer to what we want
+  for (int i = 0 ; i < SIZE_DATA ; i++){
+    samples[i] = fabs(fr[i] + fi[i]);
+  }
+}
+
+// Function that compute the number of steps in the raw_data[size_data]
+static uint16_t compute_steps(short (*raw_data)[SIZE_DATA]) { 
+  int i, squared_norm[SIZE_DATA]; // store the squared norm of the data
+   
+  // square norm calculation
+    for (i = 0; i < SIZE_DATA ; ++i)
+      squared_norm[i] = (int)raw_data[X][i] * (int)raw_data[X][i] + 
+                    (int)raw_data[Y][i] * (int)raw_data[Y][i] + (int)raw_data[Z][i] * (int)raw_data[Z][i];
   
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Starting filtering...\n"); 
+  filter_samples(squared_norm);
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Starting step counting...\n"); 
+  return step_count(squared_norm);
+}
+
+// Function called when num_samples are ready from the accel.
+static void accel_data_handler(AccelData *data, uint32_t num_samples) {
+  uint32_t i;
+  static uint16_t num_step = 0;
+  static short counter = 0;            // used to know when we have all samples ready
+  static short raw_data[3][SIZE_DATA]; // store those samples
+  static char  results[60];
+  
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "counter = %d\n", counter); 
+  // Store the data from the accel. into one big array
+  for (i = 0; i < num_samples ; ++i)
+  { 
+    raw_data[X][i+num_samples*counter] = data[i].x;
+    raw_data[Y][i+num_samples*counter] = data[i].y;
+    raw_data[Z][i+num_samples*counter] = data[i].z;
+  }
+  
+  if (counter == MAX_COUNTER) // when all the data is ready, send it
+  {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Sending the data...\n"); 
+    num_step += compute_steps(raw_data);
+    snprintf(results, 60, "%d", num_step);
+    text_layer_set_text(helloWorld_layer, results);
+    counter = 0;
+  }
+  else
+    ++counter;
+  return;
 }
 
 // Init function called when app is launched
 static void init(void) {
-    short datar[] = {15,700,-4,0,-69,0,7,0} ;
+  short datar[] = {15,700,-4,0,-69,0,7,0} ;
   short datai[] = {0,0,0,0,0,0,0,0};
   fix_fft(datar, datai, 3, 0);
  // four1(data,2,0);
@@ -271,7 +216,7 @@ static void init(void) {
         APP_LOG(APP_LOG_LEVEL_INFO,"Reverse %hi %hi\n", datar[i], datai[i]);
 
   }
-    int num_samples = 10;
+    int num_samples = NUM_SAMPLES;
     // Subscribe to accelerometer
     accel_data_service_subscribe(num_samples, accel_data_handler);
     
@@ -307,8 +252,6 @@ static void init(void) {
           APP_LOG(APP_LOG_LEVEL_DEBUG, "End of init'");
 }
 
-
-
 // deinit function called when the app is closed
 static void deinit(void) {
   
@@ -320,8 +263,6 @@ static void deinit(void) {
 
 int main(void) {
     init();
-
-  
     app_event_loop();
     deinit();
 }
