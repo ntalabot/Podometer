@@ -86,7 +86,7 @@ short fix_mpy(short a, short b);
 int fix_fft(short fr[], short fi[], int m, int inverse)
 {
         int mr,nn,i,j,l,k,istep, n, scale, shift;
-        short qr,qi,tr,ti,wr,wi; // Deleted a "t"
+        short qr,qi,tr,ti,wr,wi; // Deleted an unused "t"
 
                 n = 1<<m;
 

@@ -41,7 +41,7 @@ TextLayer *background_layer;
 TextLayer *helloWorld_layer;
 
 // Given the filtered samples for the steps and their number, returns the number of steps counted
-static uint16_t step_count(int steps[]){
+static uint16_t step_count(short *steps){
   uint16_t num_edges = 0;
   uint16_t num_steps = 0;
   short edges[SIZE_DATA]; // used to be = {};
@@ -61,12 +61,12 @@ static uint16_t step_count(int steps[]){
   }
 // Create edges array to stock top and bottom edges separatly
   if((num_edges % 2) == 0){    // Used to be fmod(num_edges,2)
-    num_edges1 = num_edges/2;
-    num_edges2 = num_edges/2;    // NICO need to declare the variables before so i moved the declarations
+    num_edges1 = num_edges>>1;  // >>1 is equivalent to /2
+    num_edges2 = num_edges>>1;    // NICO need to declare the variables before so i moved the declarations
   }
   else{
-    num_edges1 = (num_edges+1)/2;
-    num_edges2 = (num_edges-1)/2; // NICO ditto
+    num_edges1 = (num_edges+1)>>1;
+    num_edges2 = (num_edges-1)>>1; // NICO ditto
  }
 
   //short edges1[num_edges1]; ********************
@@ -91,8 +91,8 @@ static uint16_t step_count(int steps[]){
 
   int fixed1, fixed2, threshold; // NOT SURE CLOUD PEBBLE LIKES FLOATS... -> I tried with int
 
-  fixed1 = 8400; // old value = 0.0084
-  fixed2 = 76000; // old value = 0.076
+  fixed1 = 84; // old value = 0.0084
+  fixed2 = 760; // old value = 0.076
 
 
   // Check if conditions for counting steps are verified and count steps
@@ -104,14 +104,14 @@ static uint16_t step_count(int steps[]){
       val1 = edges[i-1];
     }
     val2 = edges[i];
-    if (fabs(mean1-mean2)*0.25 > fixed1){
-      threshold = fabs(mean1-mean2)*0.25;
+    if ((abs(mean1-mean2)>>2) > fixed1){  // >>2 is equivalent to /4
+      threshold = abs(mean1-mean2)>>2;
     }
     else{
       threshold = fixed2;
     }
 
-    if(fabs(val2-val1) > threshold){
+    if(abs(val2-val1) > threshold){
       num_steps += 1;
     }
   }
@@ -119,9 +119,10 @@ static uint16_t step_count(int steps[]){
 }
 
 //Function that filters given sample array and modifies it with new filtered values 
-static void filter_samples(int* samples) {
+static void filter_samples(short *samples) {
   short fr[SIZE_DATA], fi[SIZE_DATA];
   int M, lowerbound; // M is the power of 2 that gives us the number of samples we have. lowerbound is when we start to filter
+  int HNHN = 0; ///////////////////////////////////////////////// garbage
   // Copy sample values in table and initialise fi
   for (int i = 0; i < SIZE_DATA ;i++){
     fr[i] = samples[i];
@@ -137,8 +138,9 @@ static void filter_samples(int* samples) {
   }
 
   // Do the fft
+  HNHN = HNHN+M+1+lowerbound+fr[0]+fi[0]; // To avoid unused variable
   fix_fft(fr,fi,M,0);
-
+  
   // Filter depending on the lowerbound 
   for (int i = lowerbound; i < SIZE_DATA ;i++){
     fr[i] = 0;
@@ -150,18 +152,18 @@ static void filter_samples(int* samples) {
 
   // Give values back to samples array. Imaginary part is added because it seems closer to what we want
   for (int i = 0 ; i < SIZE_DATA ; i++){
-    samples[i] = fabs(fr[i] + fi[i]);
+    samples[i] = abs(fr[i] + fi[i]); // problem with samples[i]
   }
 }
 
 // Function that compute the number of steps in the raw_data[size_data]
 static uint16_t compute_steps(short (*raw_data)[SIZE_DATA]) { 
-  int i, squared_norm[SIZE_DATA]; // store the squared norm of the data
+  short i, squared_norm[SIZE_DATA]; // store the squared norm of the data
    
   // square norm calculation
     for (i = 0; i < SIZE_DATA ; ++i)
-      squared_norm[i] = (int)raw_data[X][i] * (int)raw_data[X][i] + 
-                    (int)raw_data[Y][i] * (int)raw_data[Y][i] + (int)raw_data[Z][i] * (int)raw_data[Z][i];
+      squared_norm[i] = raw_data[X][i] * raw_data[X][i] + 
+                    raw_data[Y][i] * raw_data[Y][i] + raw_data[Z][i] * raw_data[Z][i];
   
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Starting filtering...\n"); 
   filter_samples(squared_norm);
@@ -172,7 +174,8 @@ static uint16_t compute_steps(short (*raw_data)[SIZE_DATA]) {
 // Function called when num_samples are ready from the accel.
 static void accel_data_handler(AccelData *data, uint32_t num_samples) {
   uint32_t i;
-  static uint16_t num_step = 0;
+  int steps;
+  static uint16_t total_steps = 0;
   static short counter = 0;            // used to know when we have all samples ready
   static short raw_data[3][SIZE_DATA]; // store those samples
   static char  results[60];
@@ -181,16 +184,17 @@ static void accel_data_handler(AccelData *data, uint32_t num_samples) {
   // Store the data from the accel. into one big array
   for (i = 0; i < num_samples ; ++i)
   { 
-    raw_data[X][i+num_samples*counter] = data[i].x;
-    raw_data[Y][i+num_samples*counter] = data[i].y;
-    raw_data[Z][i+num_samples*counter] = data[i].z;
+    raw_data[X][i+num_samples*counter] = data[i].x>>3; // >>3 is equivalent to /8
+    raw_data[Y][i+num_samples*counter] = data[i].y>>3; // to avoid overflow with values that are too big
+    raw_data[Z][i+num_samples*counter] = data[i].z>>3;
   }
   
   if (counter == MAX_COUNTER) // when all the data is ready, send it
   {
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "Sending the data...\n"); 
-    num_step += compute_steps(raw_data);
-    snprintf(results, 60, "%d", num_step);
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Sending the data...\n");
+    steps = compute_steps(raw_data);
+    total_steps += steps;
+    snprintf(results, 60, "%d; %d", steps, total_steps);
     text_layer_set_text(helloWorld_layer, results);
     counter = 0;
   }
@@ -265,4 +269,5 @@ int main(void) {
     init();
     app_event_loop();
     deinit();
+  return EXIT_SUCCESS;
 }
