@@ -20,7 +20,7 @@ count steps precisely based on accelerometer data.
 Don't hesitate to ask us questions.
 Good luck and have fun!
 ---------------------------------------------------------------------------*/
-
+/*
 // Include Pebble library
 #include <pebble.h>
 #include <math.h>
@@ -288,3 +288,5 @@ int main(void) {
     deinit();
   return EXIT_SUCCESS;
 }
+
+*/
