@@ -26,6 +26,7 @@ Good luck and have fun!
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "integer_fft.h"
 
 #define X            0      //
@@ -49,13 +50,13 @@ static uint16_t step_count(short *steps){
   int16_t num_edges1 = 0;
   int16_t num_edges2 = 0; 
   // Count and store number of edges in the signal
-  for (int i = 0 ; i < SIZE_DATA -3 ; ++i)
+  for (int i = 10 ; i < 19; ++i)
   {
-    sign1 = steps[1+i]-steps[i];
-    sign2 = steps[2+i]-steps[1+i];
+    sign1 = steps[1+i-10]-steps[i-10];
+    sign2 = steps[2+i-10]-steps[1+i-10];
     if (sign1*sign2 < 0)
     {
-      edges[num_edges] = steps[1+i];
+      edges[num_edges] = steps[1+i-10];
       num_edges += 1;
     }
   }
@@ -91,10 +92,10 @@ static uint16_t step_count(short *steps){
 
   int fixed1, fixed2, threshold; // NOT SURE CLOUD PEBBLE LIKES FLOATS... -> I tried with int
 
-  fixed1 = 84; // old value = 0.0084
-  fixed2 = 760; // old value = 0.076
+  fixed1 = 30000; // old value = 0.0084
+  fixed2 = 150; // old value = 0.076
 
-
+  int maxi = 0;
   // Check if conditions for counting steps are verified and count steps
   for (int i = 1 ; i < num_edges ; i++){
     if (i == 0){
@@ -112,7 +113,11 @@ static uint16_t step_count(short *steps){
     }
 
     if(abs(val2-val1) > threshold){
-      num_steps += 1;
+      if (abs(val2-val1) > 0.5*maxi){
+        num_steps += 1;
+        if (abs(val2-val1) > maxi)
+          maxi = abs(val2-val1); // IMPROVE BY STORING EVERY DIFFERENCE AND THEN COMPARING TO MAXIMUM DIFFERENCE AT END
+      }
     }
   }
   return num_steps;
@@ -124,10 +129,20 @@ static void filter_samples(short *samples) {
   int M, lowerbound; // M is the power of 2 that gives us the number of samples we have. lowerbound is when we start to filter
   int HNHN = 0; ///////////////////////////////////////////////// garbage
   // Copy sample values in table and initialise fi
+  //char fourier[20000];
+ // char *temp = "          ";
+ // strcpy(fourier, "\nTest ");
+
   for (int i = 0; i < SIZE_DATA ;i++){
     fr[i] = samples[i];
     fi[i] = 0;
+    APP_LOG(APP_LOG_LEVEL_DEBUG,"\n%d",samples[i]);
+
+    //snprintf(temp,10,"%d ",samples[i]);
+    //strcat(fourier, temp);
   }
+
+//  APP_LOG(APP_LOG_LEVEL_DEBUG,"\n%s",fourier);
 
   // Lowerbound is ceiling of 0.05*num_samples
   switch(SIZE_DATA){
@@ -148,11 +163,17 @@ static void filter_samples(short *samples) {
   }
 
   // Do inverse fft to get filtered samples
-  fix_fft(fr,fr,M,1);
+  int scale = fix_fft(fr,fr,M,1);
+    APP_LOG(APP_LOG_LEVEL_DEBUG,"\nINVERSE\n");
 
   // Give values back to samples array. Imaginary part is added because it seems closer to what we want
   for (int i = 0 ; i < SIZE_DATA ; i++){
+    fr[i] = fr[i]<<scale;
+    fi[i] = fi[i]<<scale;
     samples[i] = abs(fr[i] + fi[i]); // problem with samples[i]
+        APP_LOG(APP_LOG_LEVEL_DEBUG,"\n%d",samples[i]);
+
+    
   }
 }
 
@@ -184,9 +205,9 @@ static void accel_data_handler(AccelData *data, uint32_t num_samples) {
   // Store the data from the accel. into one big array
   for (i = 0; i < num_samples ; ++i)
   { 
-    raw_data[X][i+num_samples*counter] = data[i].x>>3; // >>3 is equivalent to /8
-    raw_data[Y][i+num_samples*counter] = data[i].y>>3; // to avoid overflow with values that are too big
-    raw_data[Z][i+num_samples*counter] = data[i].z>>3;
+    raw_data[X][i+num_samples*counter] = data[i].x>>5; // >>4 is equivalent to /16
+    raw_data[Y][i+num_samples*counter] = data[i].y>>5; // to avoid overflow with values that are too big
+    raw_data[Z][i+num_samples*counter] = data[i].z>>5;
   }
   
   if (counter == MAX_COUNTER) // when all the data is ready, send it
