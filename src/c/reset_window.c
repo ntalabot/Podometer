@@ -37,7 +37,7 @@ static void window_load(Window *window) {
   // Create the text layer
   const GEdgeInsets label_insets = {.top = 25, .right = ACTION_BAR_WIDTH, .left = ACTION_BAR_WIDTH/10};
   s_label_layer = text_layer_create(grect_inset(bounds, label_insets));
-  text_layer_set_text(s_label_layer, "Do you really want to reset your steps ?");
+  text_layer_set_text(s_label_layer, "Are you sure you want to reset your steps ?");
   text_layer_set_background_color(s_label_layer, GColorClear);
   text_layer_set_text_alignment(s_label_layer, GTextAlignmentCenter);
   text_layer_set_font(s_label_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
