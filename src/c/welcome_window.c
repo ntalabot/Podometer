@@ -1,7 +1,6 @@
 #include <pebble.h>
 #include "welcome_window.h"
 
-// BEGIN AUTO-GENERATED UI CODE; DO NOT MODIFY
 static Window *s_window;
 static GFont s_res_gothic_14;
 static GBitmap *s_res_image_man_icon;
@@ -19,6 +18,7 @@ static void initialise_ui(void) {
   
   s_res_gothic_14 = fonts_get_system_font(FONT_KEY_GOTHIC_14);
   s_res_image_man_icon = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MAN_ICON);
+  
   // s_textlayer_1
   s_textlayer_1 = text_layer_create(GRect(22, 105, 100, 20));
   text_layer_set_text(s_textlayer_1, "Quentin Golay");
@@ -63,7 +63,6 @@ static void destroy_ui(void) {
   bitmap_layer_destroy(s_bitmaplayer_1);
   gbitmap_destroy(s_res_image_man_icon);
 }
-// END AUTO-GENERATED UI CODE
 
 static void handle_window_unload(Window* window) {
   destroy_ui();

@@ -3,17 +3,12 @@
 #include "steps_window.h"
 #include "menu_window.h"
 
-// BEGIN AUTO-GENERATED UI CODE; DO NOT MODIFY
 static Window *s_window;
 static Layer *s_progress_layer;
 static GFont s_res_gothic_28_bold;
 static GFont s_res_gothic_24_bold;
-//static TextLayer *s_textlayer_1;
 static TextLayer *s_textlayer_2;
-//static TextLayer *s_textlayer_3;
 static TextLayer *s_textlayer_4;
-// static TextLayer *s_textlayer_5;
-// static TextLayer *s_textlayer_6;
 StatusBarLayer *status_bar_layer;
 
 // Variables
@@ -66,16 +61,12 @@ static void progress_layer_update_proc(Layer *layer, GContext *ctx) {
     // progress bar Gray
   inset = grect_inset(layer_get_bounds(layer), GEdgeInsets(16));
   graphics_context_set_fill_color(ctx,GColorDarkGray);
-  graphics_fill_radial(ctx, inset, GOvalScaleModeFitCircle, 8, DEG_TO_TRIGANGLE(0),
-  //DEG_TO_TRIGANGLE(360 * ((float)(steps) / (float)(goal))));
-  DEG_TO_TRIGANGLE(360));
+  graphics_fill_radial(ctx, inset, GOvalScaleModeFitCircle, 8, DEG_TO_TRIGANGLE(0), DEG_TO_TRIGANGLE(360));
     
     // progress bar White
   inset = grect_inset(layer_get_bounds(layer), GEdgeInsets(16));
   graphics_context_set_fill_color(ctx,GColorWhite);
-  graphics_fill_radial(ctx, inset, GOvalScaleModeFitCircle, 8, DEG_TO_TRIGANGLE(0),
-  //DEG_TO_TRIGANGLE(360 * ((float)(steps) / (float)(goal))));
-  DEG_TO_TRIGANGLE(360 * (steps-goal) / goal));
+  graphics_fill_radial(ctx, inset, GOvalScaleModeFitCircle, 8, DEG_TO_TRIGANGLE(0), DEG_TO_TRIGANGLE(360 * (steps-goal) / goal));
   
   // external circle
   inset = grect_inset(layer_get_bounds(layer), GEdgeInsets(16));
@@ -105,9 +96,7 @@ static void progress_layer_update_proc(Layer *layer, GContext *ctx) {
     // progress bar
   inset = grect_inset(layer_get_bounds(layer), GEdgeInsets(16));
   graphics_context_set_fill_color(ctx,GColorDarkGray);
-  graphics_fill_radial(ctx, inset, GOvalScaleModeFitCircle, 8, DEG_TO_TRIGANGLE(0),
-  //DEG_TO_TRIGANGLE(360 * ((float)(steps) / (float)(goal))));
-  DEG_TO_TRIGANGLE(360 * steps / goal));
+  graphics_fill_radial(ctx, inset, GOvalScaleModeFitCircle, 8, DEG_TO_TRIGANGLE(0), DEG_TO_TRIGANGLE(360 * steps / goal));
   
   // external circle
   inset = grect_inset(layer_get_bounds(layer), GEdgeInsets(16));
@@ -133,7 +122,6 @@ static void progress_layer_update_proc(Layer *layer, GContext *ctx) {
   line_width_trigangle = 400;
   graphics_fill_radial(ctx, inset, GOvalScaleModeFitCircle, 8, trigangle - line_width_trigangle, trigangle);
   }
-  
 }
 
 static void initialise_ui(void) {
@@ -158,85 +146,37 @@ static void initialise_ui(void) {
   layer_set_update_proc(s_progress_layer, progress_layer_update_proc);
   layer_add_child(window_get_root_layer(s_window), (Layer *)s_progress_layer);
   
-  // s_textlayer_1
-  //s_textlayer_1 = text_layer_create(GRect(0, 15, 144, 25));
-  //text_layer_set_background_color(s_textlayer_1, GColorBlack);
-  //text_layer_set_text_color(s_textlayer_1, GColorWhite);
-  //text_layer_set_text(s_textlayer_1, "Distance");
-  //text_layer_set_text_alignment(s_textlayer_1, GTextAlignmentCenter);
-  //text_layer_set_font(s_textlayer_1, s_res_gothic_24_bold);
-  //layer_add_child(window_get_root_layer(s_window), (Layer *)s_textlayer_1);
-  
   // s_textlayer_2
-  // s_textlayer_2 = text_layer_create(GRect(0, 60, 72, 30));
   s_textlayer_2 = text_layer_create(GRect(32, 60, 80, 30));
   text_layer_set_background_color(s_textlayer_2, GColorBlack);
   text_layer_set_text_color(s_textlayer_2, GColorWhite);
-  //snprintf(buffer1, sizeof(buffer1), "%f", distance);    // prints value of steps in buffer
   distance = (steps * ((gender * size)/100))/1000;
   floatToString(buffer1, sizeof(buffer1), distance);
   snprintf(testbuffer, sizeof(testbuffer),"%s %s", buffer1, "km");
   text_layer_set_text(s_textlayer_2, testbuffer);
-  // text_layer_set_text_alignment(s_textlayer_2, GTextAlignmentRight);
   text_layer_set_text_alignment(s_textlayer_2, GTextAlignmentCenter);
   text_layer_set_font(s_textlayer_2, s_res_gothic_28_bold);
   layer_add_child(window_get_root_layer(s_window), (Layer *)s_textlayer_2);
   
-  // s_textlayer_5
-  // s_textlayer_5 = text_layer_create(GRect(82, 60, 44, 30));
-  // text_layer_set_background_color(s_textlayer_5, GColorBlack);
-  // text_layer_set_text_color(s_textlayer_5, GColorWhite);
-  // text_layer_set_text(s_textlayer_5, "km");
-  // text_layer_set_text_alignment(s_textlayer_5, GTextAlignmentLeft);
-  // text_layer_set_font(s_textlayer_5, s_res_gothic_28_bold);
-  // layer_add_child(window_get_root_layer(s_window), (Layer *)s_textlayer_5);
-  
-  // s_textlayer_3
-  //s_textlayer_3 = text_layer_create(GRect(1, 95, 144, 15));
-  //text_layer_set_background_color(s_textlayer_3, GColorBlack);
-  //text_layer_set_text_color(s_textlayer_3, GColorWhite);
-  //text_layer_set_text(s_textlayer_3, "out of");
-  //text_layer_set_text_alignment(s_textlayer_3, GTextAlignmentCenter);
-  //layer_add_child(window_get_root_layer(s_window), (Layer *)s_textlayer_3);
-  
   // s_textlayer_4
-  // s_textlayer_4 = text_layer_create(GRect(0, 115, 72, 30));
   s_textlayer_4 = text_layer_create(GRect(0, 143, 144, 20));
   text_layer_set_background_color(s_textlayer_4, GColorBlack);
   text_layer_set_text_color(s_textlayer_4, GColorWhite);
-  //snprintf(buffer2, sizeof(buffer2), "%f", d_objective);    // prints value of steps in buffer
   d_goal = (goal * ((gender * size)/100))/1000;
   floatToString(buffer2, sizeof(buffer2), d_goal);
   snprintf(testbuffer2, sizeof(testbuffer2),"%s %s %s", "Current goal:", buffer2, "km");
   text_layer_set_text(s_textlayer_4, testbuffer2);
-  // text_layer_set_text_alignment(s_textlayer_4, GTextAlignmentRight);
   text_layer_set_font(s_textlayer_4, fonts_get_system_font(FONT_KEY_GOTHIC_14));
   text_layer_set_text_alignment(s_textlayer_4, GTextAlignmentCenter);
-  //text_layer_set_font(s_textlayer_4, s_res_gothic_28_bold);
   layer_add_child(window_get_root_layer(s_window), (Layer *)s_textlayer_4);
-  
-  // s_textlayer_6
-  // s_textlayer_6 = text_layer_create(GRect(82, 115, 44, 30));
-  // text_layer_set_background_color(s_textlayer_6, GColorBlack);
-  // text_layer_set_text_color(s_textlayer_6, GColorWhite);
-  // text_layer_set_text(s_textlayer_6, "km");
-  // text_layer_set_text_alignment(s_textlayer_6, GTextAlignmentLeft);
-  // text_layer_set_font(s_textlayer_6, s_res_gothic_28_bold);
-  // layer_add_child(window_get_root_layer(s_window), (Layer *)s_textlayer_6);
-  
 }
 
 static void destroy_ui(void) {
   window_destroy(s_window);
-  //text_layer_destroy(s_textlayer_1);
   text_layer_destroy(s_textlayer_2);
-  //text_layer_destroy(s_textlayer_3);
   text_layer_destroy(s_textlayer_4);
-  // text_layer_destroy(s_textlayer_5);
-  // text_layer_destroy(s_textlayer_6);
   status_bar_layer_destroy(status_bar_layer);
 }
-// END AUTO-GENERATED UI CODE
 
 static void handle_window_unload(Window* window) {
   destroy_ui();

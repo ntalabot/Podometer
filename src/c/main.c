@@ -4,21 +4,6 @@ Template for TP of the course "System Engineering" 2016, EPFL
 Authors: Flavien Bardyn & Martin Savary
 Version: 1.0
 Date: 10.08.2016
-
-Use this "HelloWorld" example as basis to code your own app, which should at least 
-count steps precisely based on accelerometer data. 
-
-- Add the accelerometer data acquisition
-- Implement your own pedometer using these data
-- (Add an estimation of the distance travelled)
-
-- Make an effort on the design of the app, try to do something fun!
-- Comment and indent your code properly!
-- Try to use your imagination and not google (we already did it, and it's disappointing!)
-  to offer us a smart and original solution of pedometer
-
-Don't hesitate to ask us questions.
-Good luck and have fun!
 ---------------------------------------------------------------------------*/
 
 // Include Pebble library
@@ -31,7 +16,6 @@ Good luck and have fun!
 #include "welcome_window.h"
 #include "steps_window.h"
 #include "distance_window.h"
-#include "test_window.h"
 #include "gender_window.h"
 
 #define X            0      //
@@ -304,10 +288,11 @@ static void deinit(void) {
 int main(void) {
     init();
     
-  show_welcome_window();
+    show_welcome_window();
     app_timer_register(2000, launch_app, NULL);    // lauches init after 2000ms
 
-  //show_steps_window();
+    //show_steps_window();
+  
     app_event_loop();
   deinit();
   return EXIT_SUCCESS;
