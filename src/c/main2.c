@@ -13,7 +13,7 @@ Date: 10.08.2016
 #include "distance_window.h"
 #include "test_window.h"
 #include "gender_window.h"
-
+/*
 int size = 170;
 int steps = 13700;
 int goal = 10000;
@@ -33,4 +33,4 @@ int main(void) {
   //show_test_window();
   
     app_event_loop();
-}
+}*/

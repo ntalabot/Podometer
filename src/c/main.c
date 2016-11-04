@@ -28,6 +28,11 @@ Good luck and have fun!
 #include <stdlib.h>
 #include <string.h>
 #include "integer_fft.h"
+#include "welcome_window.h"
+#include "steps_window.h"
+#include "distance_window.h"
+#include "test_window.h"
+#include "gender_window.h"
 
 #define X            0      //
 #define Y            1      // Used for the array "datas"
@@ -40,9 +45,13 @@ Good luck and have fun!
 Window *main_window;
 TextLayer *background_layer;
 TextLayer *helloWorld_layer;
+int size = 170;
+int steps = 13700;
+int goal = 10000;
+float gender = FEMALE;
 
 // Given the filtered samples for the steps, returns the number of steps counted
-static uint16_t step_count(short *steps){
+static uint16_t step_count(short *samples){
   uint16_t num_edges = 0;
   uint16_t num_steps = 0;
   short edges[SIZE_DATA]; // used to be = {};
@@ -52,11 +61,11 @@ static uint16_t step_count(short *steps){
   // Count and store number of edges in the signal
   for (int i = 10 ; i < 19; ++i)
   {
-    sign1 = steps[1+i-10]-steps[i-10];
-    sign2 = steps[2+i-10]-steps[1+i-10];
+    sign1 = samples[1+i-10]-samples[i-10];
+    sign2 = samples[2+i-10]-samples[1+i-10];
     if (sign1*sign2 < 0)
     {
-      edges[num_edges] = steps[1+i-10];
+      edges[num_edges] = samples[1+i-10];
       num_edges += 1;
     }
   }
@@ -224,6 +233,12 @@ static void accel_data_handler(AccelData *data, uint32_t num_samples) {
   return;
 }
 
+// Change windows from welcome to steps
+void launch_app(void *data){
+  hide_welcome_window();
+  show_steps_window();    // first window to show
+}
+
 // Init function called when app is launched
 static void init(void) {
   short datar[] = {15,700,-4,0,-69,0,7,0} ;
@@ -288,7 +303,12 @@ static void deinit(void) {
 
 int main(void) {
     init();
+    
+  show_welcome_window();
+    app_timer_register(2000, launch_app, NULL);    // lauches init after 2000ms
+
+  //show_steps_window();
     app_event_loop();
-    deinit();
+  deinit();
   return EXIT_SUCCESS;
 }
