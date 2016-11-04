@@ -1,18 +1,58 @@
 {
-    "author": "nicolas.talabot@epfl.ch",
+    "author": "Groupe 3",
     "dependencies": {},
     "keywords": [],
-    "name": "benjamin_fft",
+    "name": "tp-system-engineering",
     "pebble": {
-        "displayName": "Benjamin_FFt",
-        "enableMultiJS": true,
+        "displayName": "TP System Engineering",
+        "enableMultiJS": false,
         "messageKeys": [],
         "projectType": "native",
         "resources": {
-            "media": []
+            "media": [
+                {
+                    "file": "images/cross.png",
+                    "name": "CROSS",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/tick.png",
+                    "name": "TICK",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/ic_person_white_18dp_2x.png",
+                    "name": "IMAGE_ICON_PERSON",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/converted (1).png",
+                    "name": "IMAGE_TEST",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/right-footprint-xxl.png",
+                    "name": "IMAGE_FULL",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/walking_man.png",
+                    "name": "IMAGE_MAN_ICON",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                }
+            ]
         },
         "sdkVersion": "3",
-        "uuid": "69eca0da-f4b6-4626-a1d4-8bc4d885e797",
+        "targetPlatforms": [
+            "aplite"
+        ],
+        "uuid": "62f781cf-0f5a-4218-b73c-a7e947933348",
         "watchapp": {
             "watchface": false
         }
