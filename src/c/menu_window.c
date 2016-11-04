@@ -14,6 +14,7 @@ extern float gender;
  
 static Window *s_window;
 static MenuLayer *menu_layer;
+static TextLayer *s_text_layer;
 
 // SIZE WINDOW Sauvegarde taille + retour menu layer
  static void size_complete_callback(PIN pin, void *context) {
@@ -107,9 +108,19 @@ static void initialise_ui(void) {
     window_set_fullscreen(s_window, true);
   #endif
   
+  // Top text_layer
+  s_text_layer = text_layer_create(GRect(0, 0, 144, 18));
+  text_layer_set_background_color(s_text_layer, GColorBlack);
+  text_layer_set_text_color(s_text_layer, GColorWhite);
+  text_layer_set_text(s_text_layer, "Settings");
+  text_layer_set_font(s_text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
+  text_layer_set_text_alignment(s_text_layer, GTextAlignmentCenter);
+  layer_add_child(window_get_root_layer(s_window), text_layer_get_layer(s_text_layer));
+  
    //Create it - 12 is approx height of the top bar
-	menu_layer = menu_layer_create(GRect(0, 0, 144, 168-16));
-  //menu_layer_set_normal_colors(menu_layer, GColorBlack, GColorWhite);
+	menu_layer = menu_layer_create(GRect(0, 18, 144, 168));
+  menu_layer_set_normal_colors(menu_layer, GColorBlack, GColorWhite);
+  menu_layer_set_highlight_colors(menu_layer, GColorWhite, GColorBlack);
 	
 	//Let it receive clicks
 	menu_layer_set_click_config_onto_window(menu_layer, s_window);

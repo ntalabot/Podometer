@@ -30,7 +30,7 @@ Window *main_window;
 TextLayer *background_layer;
 TextLayer *helloWorld_layer;
 int size = 170;
-int steps = 13700;
+int steps = 0;
 int goal = 10000;
 float gender = FEMALE;
 

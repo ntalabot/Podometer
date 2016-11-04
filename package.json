@@ -29,20 +29,8 @@
                     "type": "bitmap"
                 },
                 {
-                    "file": "images/ic_person_white_18dp_2x.png",
-                    "name": "IMAGE_ICON_PERSON",
-                    "targetPlatforms": null,
-                    "type": "bitmap"
-                },
-                {
                     "file": "images/cross.png",
                     "name": "CROSS",
-                    "targetPlatforms": null,
-                    "type": "bitmap"
-                },
-                {
-                    "file": "images/converted (1).png",
-                    "name": "IMAGE_TEST",
                     "targetPlatforms": null,
                     "type": "bitmap"
                 }

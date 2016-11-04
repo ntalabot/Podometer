@@ -119,6 +119,14 @@ static void progress_layer_update_proc(Layer *layer, GContext *ctx) {
   line_width_trigangle = 400;
   graphics_fill_radial(ctx, inset, GOvalScaleModeFitCircle, 8, trigangle - line_width_trigangle, trigangle);
   }
+  
+  // Update text_layers
+  display_value(steps, buffer1);
+  text_layer_set_text(s_textlayer_2, buffer1);
+  
+  display_value(goal, buffer2);
+  snprintf(testbuffer, sizeof(testbuffer),"%s %s", "Current goal:", buffer2);
+  text_layer_set_text(s_textlayer_3, testbuffer);
 }
 
 static void initialise_ui(void) {
@@ -149,8 +157,8 @@ static void initialise_ui(void) {
   s_textlayer_2 = text_layer_create(GRect(41, 48, 62, 30));
   text_layer_set_background_color(s_textlayer_2, GColorBlack);
   text_layer_set_text_color(s_textlayer_2, GColorWhite);
-  display_value(steps, buffer1);
-  text_layer_set_text(s_textlayer_2, buffer1);
+  //display_value(steps, buffer1);
+  //text_layer_set_text(s_textlayer_2, buffer1);
   text_layer_set_font(s_textlayer_2, s_res_gothic_28_bold);
   text_layer_set_text_alignment(s_textlayer_2, GTextAlignmentCenter);
   layer_add_child(s_window_layer, (Layer *)s_textlayer_2);
@@ -159,9 +167,9 @@ static void initialise_ui(void) {
   s_textlayer_3 = text_layer_create(GRect(0, 143, 144, 20));
   text_layer_set_background_color(s_textlayer_3, GColorBlack);
   text_layer_set_text_color(s_textlayer_3, GColorWhite);
-  display_value(goal, buffer2);
-  snprintf(testbuffer, sizeof(testbuffer),"%s %s", "Current goal:", buffer2);
-  text_layer_set_text(s_textlayer_3, testbuffer);
+  //display_value(goal, buffer2);
+  //snprintf(testbuffer, sizeof(testbuffer),"%s %s", "Current goal:", buffer2);
+  //text_layer_set_text(s_textlayer_3, testbuffer);
   text_layer_set_text_alignment(s_textlayer_3, GTextAlignmentCenter);
   text_layer_set_font(s_textlayer_3, fonts_get_system_font(FONT_KEY_GOTHIC_14));
   layer_add_child(window_get_root_layer(s_window), (Layer *)s_textlayer_3);
