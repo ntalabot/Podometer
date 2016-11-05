@@ -38,12 +38,18 @@ float gender = FEMALE;
 static uint16_t step_count(short *samples){
   uint16_t num_edges = 0;
   uint16_t num_steps = 0;
-  short edges[SIZE_DATA]; // used to be = {};
+  int16_t edges[SIZE_DATA];
+  int16_t differences[SIZE_DATA];
+  int16_t max_difference = 0;
   int16_t sign1,sign2;
-  int16_t num_edges1 = 0;
-  int16_t num_edges2 = 0; 
+ /* int16_t num_edges1 = 0;
+  int16_t num_edges2 = 0;*/
+  int16_t min_threshold = 5;
+  int16_t max_threshold = 150;
+  double max_distance_ratio = 0.3;
+
   // Count and store number of edges in the signal
-  for (int i = 10 ; i < 19; ++i)
+  for (int i = 9 ; i < 19; ++i)
   {
     sign1 = samples[1+i-10]-samples[i-10];
     sign2 = samples[2+i-10]-samples[1+i-10];
@@ -51,16 +57,33 @@ static uint16_t step_count(short *samples){
     {
       edges[num_edges] = samples[1+i-10];
       num_edges += 1;
+      if (i == 0){
+        differences[i] = edges[i];
+      }
+      else{
+        differences[i] = abs(edges[i] - edges[i-1]);
+        // Store biggest difference in this data set
+        if (differences[i] > max_difference && differences[i] < max_threshold)
+          max_difference = differences[i];
+      }
     }
   }
+
+  for (int i = 0 ; i < num_edges ; i++){
+    if (differences[i] > min_threshold && differences[i] < max_threshold && differences[i] > (int16_t)(max_distance_ratio*(double)max_difference) )
+      num_steps += 1;
+  }
+
+
+/*
 // Create edges array to stock top and bottom edges separatly
   if((num_edges % 2) == 0){    // Used to be fmod(num_edges,2)
     num_edges1 = num_edges>>1;  // >>1 is equivalent to /2
-    num_edges2 = num_edges>>1;  
+    num_edges2 = num_edges>>1;
   }
   else{
     num_edges1 = (num_edges+1)>>1;
-    num_edges2 = (num_edges-1)>>1; 
+    num_edges2 = (num_edges-1)>>1;
  }
 
   //short edges1[num_edges1]; ********************
@@ -78,12 +101,12 @@ static uint16_t step_count(short *samples){
       sum2 += edges[i];
     }
   }
-           
+
   short mean1, mean2, val1, val2;
   mean1 = sum1/num_edges1;
   mean2 = sum2/num_edges2;
 
-  int fixed1, fixed2, threshold; // NOT SURE CLOUD PEBBLE LIKES FLOATS... -> I tried with integers
+  int fixed1, fixed2, threshold;
 
   fixed1 = 30000; // old value = 0.0084
   fixed2 = 150; // old value = 0.076
@@ -92,7 +115,7 @@ static uint16_t step_count(short *samples){
   // Check if conditions for counting steps are verified and count steps
   for (int i = 1 ; i < num_edges ; i++){
     if (i == 0){
-      val1 = 0; 
+      val1 = 0;
     }
     else{
       val1 = edges[i-1];
@@ -112,7 +135,10 @@ static uint16_t step_count(short *samples){
           maxi = abs(val2-val1); // IMPROVE BY STORING EVERY DIFFERENCE AND THEN COMPARING TO MAXIMUM DIFFERENCE AT END
       }
     }
-  }
+  }*/
+
+
+
   return num_steps;
 }
 
