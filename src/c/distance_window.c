@@ -201,6 +201,11 @@ void show_distance_window(void) {
   window_stack_push(s_window, true);
 }
 
+void update_distance_window(void) {
+  if (s_window != NULL)
+    layer_mark_dirty(s_progress_layer);
+}
+
 void hide_distance_window(void) {
   window_stack_remove(s_window, true);
 }

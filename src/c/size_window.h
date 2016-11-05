@@ -1,3 +1,6 @@
+#ifndef __SIZE_WINDOW_H__
+#define __SIZE_WINDOW_H__
+
 #include <pebble.h>
 
 #define NUM_CELLS 1    // -> aussi changer dans layer.h le nombre max de cells
@@ -67,3 +70,5 @@ bool size_window_get_topmost_window(SizeWindow *size_window);
  *  color: the GColor to set the highlight to
  */
 void size_window_set_highlight_color(SizeWindow *size_window, GColor color);
+
+#endif

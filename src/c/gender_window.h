@@ -1,3 +1,6 @@
+#ifndef __GENDER_WINDOW_H__
+#define __GENDER_WINDOW_H__
+
 #include <pebble.h>
 
 #define GENDER_WINDOW_NUM_ROWS     2
@@ -8,3 +11,5 @@
 #define MALE 0.415
 
 void gender_window_push();
+
+#endif

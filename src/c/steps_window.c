@@ -195,6 +195,11 @@ void show_steps_window(void) {
   window_stack_push(s_window, true);
 }
 
+void update_steps_window(void) {
+  if (s_window != NULL)
+    layer_mark_dirty(s_progress_layer);
+}
+
 void hide_steps_window(void) {
   window_stack_remove(s_window, true);
 }

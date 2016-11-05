@@ -2,7 +2,7 @@
 #include "goal_window.h"
 #include "layers_selection.h"
 
-extern int goal;  // vérifier nom avec quentin
+extern int goal;  // vérifier nom avec Quentin
 
 static char* selection_handle_get_text(int index, void *context) 
 {
@@ -25,7 +25,7 @@ static void selection_handle_inc(int index, uint8_t clicks, void *context)
   GoalWindow *goal_window = (GoalWindow*)context;
   goal_window->goals.digits[index] = goal_window->goals.digits[index] + 100;
   if(goal_window->goals.digits[index] > MAX_GOAL_VALUE) 
-  {  goal_window->goals.digits[index] = 0; }
+  {  goal_window->goals.digits[index] = 100; }
 }
 
 // Size decrementing
@@ -33,7 +33,7 @@ static void selection_handle_dec(int index, uint8_t clicks, void *context)
 {
   GoalWindow *goal_window = (GoalWindow*)context;
   goal_window->goals.digits[index] = goal_window->goals.digits[index] - 100;
-  if(goal_window->goals.digits[index] < 0) 
+  if(goal_window->goals.digits[index] < 100) 
   {  goal_window->goals.digits[index] = MAX_GOAL_VALUE; }
 }
 

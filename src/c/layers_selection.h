@@ -1,3 +1,6 @@
+#ifndef __LAYER_SELECTION_H__
+#define __LAYER_SELECTION_H__
+
 #include <pebble.h>
 
 #define MAX_SELECTION_LAYER_CELLS 1
@@ -69,3 +72,5 @@ void selection_layer_set_active(Layer *layer, bool is_active);
 void selection_layer_set_click_config_onto_window(Layer *layer, struct Window *window);
 
 void selection_layer_set_callbacks(Layer *layer, void *context, SelectionLayerCallbacks callbacks);
+
+#endif

@@ -129,7 +129,7 @@ static void filter_samples(short *samples) {
   for (int i = 0; i < SIZE_DATA ;i++){
     fr[i] = samples[i];
     fi[i] = 0;
-    APP_LOG(APP_LOG_LEVEL_DEBUG,"\n%d",samples[i]);
+    //APP_LOG(APP_LOG_LEVEL_DEBUG,"\n%d",samples[i]);
 
     //snprintf(temp,10,"%d ",samples[i]);
     //strcat(fourier, temp);
@@ -163,8 +163,8 @@ static void filter_samples(short *samples) {
   for (int i = 0 ; i < SIZE_DATA ; i++){
     fr[i] = fr[i]<<scale;
     fi[i] = fi[i]<<scale;
-    samples[i] = abs(fr[i] + fi[i]); // ### separate into abs() + abs() ? ###
-        APP_LOG(APP_LOG_LEVEL_DEBUG,"\n%d",samples[i]);
+    samples[i] = abs(fr[i]) + abs(fi[i]);
+        //APP_LOG(APP_LOG_LEVEL_DEBUG,"\n%d",samples[i]);
 
     
   }
@@ -188,7 +188,7 @@ static uint16_t compute_steps(short (*raw_data)[SIZE_DATA]) {
 // Function called when num_samples are ready from the accel.
 static void accel_data_handler(AccelData *data, uint32_t num_samples) {
   uint32_t i;
-  int steps;
+  int temp_steps;
   static uint16_t total_steps = 0;
   static short counter = 0;            // used to know when we have all samples ready
   static short raw_data[3][SIZE_DATA]; // store those samples
@@ -206,11 +206,15 @@ static void accel_data_handler(AccelData *data, uint32_t num_samples) {
   if (counter == MAX_COUNTER) // when all the data is ready, send it
   {
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Sending the data...\n");
-    steps = compute_steps(raw_data);
-    total_steps += steps;
-    snprintf(results, 60, "Temp: %d; Total: %d", steps, total_steps);
+    temp_steps = compute_steps(raw_data);
+    total_steps += temp_steps;
+    steps = total_steps;
+    snprintf(results, 60, "Temp: %d; Total: %d", temp_steps, total_steps);
     text_layer_set_text(helloWorld_layer, results);
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Temp: %d; Total: %d\n", temp_steps, total_steps);
     counter = 0;
+    update_steps_window();
+    update_distance_window();
   }
   else
     ++counter;
