@@ -44,9 +44,9 @@ static uint16_t step_count(short *samples){
   int16_t sign1,sign2;
  /* int16_t num_edges1 = 0;
   int16_t num_edges2 = 0;*/
-  int16_t min_threshold = 5;
-  int16_t max_threshold = 150;
-  double max_distance_ratio = 0.3;
+  int16_t min_threshold = 100;
+  int16_t max_threshold = 1000;
+  double max_distance_ratio = 0.1;
 
   // Count and store number of edges in the signal
   for (int i = 9 ; i < 19; ++i)
@@ -155,7 +155,7 @@ static void filter_samples(short *samples) {
   for (int i = 0; i < SIZE_DATA ;i++){
     fr[i] = samples[i];
     fi[i] = 0;
-    //APP_LOG(APP_LOG_LEVEL_DEBUG,"\n%d",samples[i]);
+    APP_LOG(APP_LOG_LEVEL_DEBUG,"\n%d",samples[i]);
 
     //snprintf(temp,10,"%d ",samples[i]);
     //strcat(fourier, temp);
@@ -183,14 +183,14 @@ static void filter_samples(short *samples) {
 
   // Do inverse fft to get filtered samples
   int scale = fix_fft(fr,fr,M,1);
-    APP_LOG(APP_LOG_LEVEL_DEBUG,"\nINVERSE\n");
+   APP_LOG(APP_LOG_LEVEL_DEBUG,"\nINVERSE\n");
 
   // Give values back to samples array. Imaginary part is added because it seems closer to what we want
   for (int i = 0 ; i < SIZE_DATA ; i++){
     fr[i] = fr[i]<<scale;
     fi[i] = fi[i]<<scale;
     samples[i] = abs(fr[i]) + abs(fi[i]);
-        //APP_LOG(APP_LOG_LEVEL_DEBUG,"\n%d",samples[i]);
+      APP_LOG(APP_LOG_LEVEL_DEBUG,"\n%d",samples[i]);
 
 
   }
