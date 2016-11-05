@@ -13,7 +13,7 @@ static BitmapLayer *s_bitmaplayer_1;
 static void initialise_ui(void) {
   s_window = window_create();
   #ifndef PBL_SDK_3
-    window_set_fullscreen(s_window, true);
+  window_set_fullscreen(s_window, true);
   #endif
   
   s_res_gothic_14 = fonts_get_system_font(FONT_KEY_GOTHIC_14);
@@ -70,9 +70,7 @@ static void handle_window_unload(Window* window) {
 
 void show_welcome_window(void) {
   initialise_ui();
-  window_set_window_handlers(s_window, (WindowHandlers) {
-    .unload = handle_window_unload,
-  });
+  window_set_window_handlers(s_window, (WindowHandlers) {.unload = handle_window_unload,});
   window_stack_push(s_window, true);
 }
 
