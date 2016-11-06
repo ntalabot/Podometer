@@ -43,28 +43,31 @@ static uint16_t step_count(short *samples) {
 	float max_distance_ratio = 0.1;
 
 	// Count and store number of edges (extremums) in the signal
-	for (int i = 0; i < 10; ++i) 
+	for (int i = 0; i < 10; ++i)
   {
     // Check if there is a sign change to see if the point is a local extremum
-		sign1 = samples[1 + i] - samples[i];
-		sign2 = samples[2 + i] - samples[1 + i];
-		if (sign1*sign2 < 0)
+    // The 9 sample points of indexes 9 to 17 are used because they are where
+    // we find our stable filtered data following the FFT.
+		sign1 = samples[i + 9] - samples[i + 8];
+		sign2 = samples[i + 10] - samples[i + 9];
+		if (sign1*sign2 < 0) // Local extremum found
 		{
-			edges[num_edges] = samples[1 + i];
+			edges[num_edges] = samples[i + 9];
 			num_edges++;
-			if (i == 0)
-				differences[i] = edges[i];
-			else {
-				differences[i] = abs(edges[i] - edges[i - 1]);
+			if (num_edges == 1) // If this is the first edge of our filtered signal, we just compare it to 0
+				differences[num_edges-1] = edges[num_edges-1];
+			else { // Otherwise we take the difference between it and the previous edge
+				differences[num_edges-1] = abs(edges[num_edges-1] - edges[num_edges - 2]);
 				// Store biggest difference in this data set
-				if ((differences[i] > max_difference) && (differences[i] < max_threshold))
-					max_difference = differences[i];
+				if ((differences[num_edges-1] > max_difference) && (differences[num_edges-1] < max_threshold))
+					max_difference = differences[num_edges-1];
 			}
 		}
 	}
-  
+
   // Count the steps based on the value of the difference between the edges of the signal
 	for (int i = 0; i < num_edges; i++) {
+    // Difference should be between minimum and maximum thresholds, and not too small compared to the biggest difference found
 		if ((differences[i] > min_threshold) && (differences[i] < max_threshold) && (differences[i] > (int16_t)(max_distance_ratio*(float)max_difference)))
 			num_steps += 1;
 	}
@@ -72,18 +75,21 @@ static uint16_t step_count(short *samples) {
 	return num_steps;
 }
 
-//Function that low-pass filters given sample array
+/*Function that low-pass filters given sample array.
+First it finds the fast fourier transform, then puts the values
+of frequencies higher than the lowerbound to 0, and computes the inverse fourier
+transform. This gives the filter sample array */
 static void filter_samples(short *samples) {
 	short fr[SIZE_DATA], fi[SIZE_DATA]; // used for the fft and ifft
 	int M, lowerbound; // M is the power of 2 that gives us the number of samples we have. lowerbound is when we start to filter
-  
+
 	// Copy sample values in table and initialise fi
 	for (int i = 0; i < SIZE_DATA; i++) {
 		fr[i] = samples[i];
 		fi[i] = 0;
 	}
 
-	// Lowerbound is 0.05 * SIZE_DATA rounded up
+	// Lowerbound is 0.05 * SIZE_DATA rounded up and depends on the size of the data
 	switch (SIZE_DATA) {
 	case(32) : M = 5; lowerbound = 2;  break;
 	case(64) : M = 6; lowerbound = 4;  break;
@@ -111,7 +117,7 @@ static void filter_samples(short *samples) {
 	}
 }
 
-// Function that compute the number of steps in the raw_data signal given by the accelerometer
+// Function that computes the number of steps in the raw_data signal given by the accelerometer
 static uint16_t compute_steps(short(*raw_data)[SIZE_DATA]) {
 	short i, squared_norm[SIZE_DATA];
 
@@ -121,7 +127,7 @@ static uint16_t compute_steps(short(*raw_data)[SIZE_DATA]) {
 		                  raw_data[Y][i] * raw_data[Y][i] + raw_data[Z][i] * raw_data[Z][i];
 
 	filter_samples(squared_norm);
-  
+
 	return step_count(squared_norm);
 }
 
@@ -174,12 +180,12 @@ static void deinit(void) {
 
 int main(void) {
 	init();
-  
+
 	show_welcome_window();
 	app_timer_register(2000, launch_app, NULL); // 2 seconds on the welcome windows, then goes to the app
-	
+
   app_event_loop();
-  
+
 	deinit();
 	return EXIT_SUCCESS;
 }
