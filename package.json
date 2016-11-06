@@ -11,6 +11,12 @@
         "resources": {
             "media": [
                 {
+                    "file": "images/footprint_icon_36.png",
+                    "name": "IMAGE_FOOTPRINT_36",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
                     "file": "images/walking_man.png",
                     "name": "IMAGE_MAN_ICON",
                     "targetPlatforms": null,
@@ -19,12 +25,6 @@
                 {
                     "file": "images/tick.png",
                     "name": "TICK",
-                    "targetPlatforms": null,
-                    "type": "bitmap"
-                },
-                {
-                    "file": "images/right-footprint-xxl.png",
-                    "name": "IMAGE_FULL",
                     "targetPlatforms": null,
                     "type": "bitmap"
                 },

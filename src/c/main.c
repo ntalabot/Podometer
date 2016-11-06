@@ -25,10 +25,10 @@ Date: 06.11.2016
 #define SIZE_DATA    NUM_SAMPLES*(MAX_COUNTER+1)  // size of the data for steps computation : 16 * (7+1) = 128
 
 // Global variables used for the person's informations
+float gender = FEMALE;
+int goal = 10000;
 int size = 170;
 int steps = 0;
-int goal = 10000;
-float gender = FEMALE;
 
 // Given the filtered norm of the acceleration, returns the number of steps counted
 static uint16_t step_count(short *samples) {

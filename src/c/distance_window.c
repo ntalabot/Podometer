@@ -17,16 +17,18 @@ extern int goal;
 extern int size;
 extern float gender;
 
+// Local variables for distance infos and text displaying
 static float distance;
 static float d_goal;
 static char buffer1[16];
 static char buffer2[16];
-static char testbuffer[30];
-static char testbuffer2[30];
+static char finalbuffer[30];
+static char finalbuffer2[30];
 
+// Print a float value in a char buffer
 // source: https://forums.pebble.com/t/displaying-the-value-of-a-floating-point/6080/6
 char* floatToString(char* buffer, int bufferSize, float number) {
-	char decimalBuffer[5];
+  char decimalBuffer[5];
 
 	snprintf(buffer, bufferSize, "%d", (int)number);
 	strcat(buffer, ".");
@@ -129,13 +131,13 @@ static void progress_layer_update_proc(Layer *layer, GContext *ctx) {
 	// Update the text layers (distance and goal)
 	distance = (steps * ((gender * size) / 100)) / 1000;
 	floatToString(buffer1, sizeof(buffer1), distance);
-	snprintf(testbuffer, sizeof(testbuffer), "%s %s", buffer1, "km");
-	text_layer_set_text(s_textlayer_2, testbuffer);
+	snprintf(finalbuffer, sizeof(finalbuffer), "%s %s", buffer1, "km");
+	text_layer_set_text(s_textlayer_2, finalbuffer);
 
 	d_goal = (goal * ((gender * size) / 100)) / 1000;
 	floatToString(buffer2, sizeof(buffer2), d_goal);
-	snprintf(testbuffer2, sizeof(testbuffer2), "%s %s %s", "Current goal:", buffer2, "km");
-	text_layer_set_text(s_textlayer_4, testbuffer2);
+	snprintf(finalbuffer2, sizeof(finalbuffer2), "%s %s %s", "Current goal:", buffer2, "km");
+	text_layer_set_text(s_textlayer_4, finalbuffer2);
 }
 
 // Init function called when the window is created
@@ -148,7 +150,6 @@ static void initialise_ui(void) {
 #endif
 
 	s_res_gothic_28_bold = fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD);
-	s_res_gothic_24_bold = fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD);
 
 	// Create status bar Layer
 	status_bar_layer = status_bar_layer_create();
@@ -156,20 +157,20 @@ static void initialise_ui(void) {
 	status_bar_layer_set_separator_mode(status_bar_layer, StatusBarLayerSeparatorModeDotted);
 	layer_add_child(window_get_root_layer(s_window), (Layer *)status_bar_layer);
 
-	// progress bar
+	// distance
+	s_textlayer_2 = text_layer_create(GRect(31, 62, 82, 30));
+	text_layer_set_background_color(s_textlayer_2, GColorBlack);
+	text_layer_set_text_color(s_textlayer_2, GColorWhite);
+  text_layer_set_font(s_textlayer_2, s_res_gothic_28_bold);
+	text_layer_set_text_alignment(s_textlayer_2, GTextAlignmentCenter);
+	layer_add_child(window_get_root_layer(s_window), (Layer *)s_textlayer_2);
+  
+  // progress bar
 	s_progress_layer = layer_create(GRect(0, 7, 144, 150));
 	layer_set_update_proc(s_progress_layer, progress_layer_update_proc);
 	layer_add_child(window_get_root_layer(s_window), (Layer *)s_progress_layer);
 
-	// s_textlayer_2
-	s_textlayer_2 = text_layer_create(GRect(32, 60, 80, 30));
-	text_layer_set_background_color(s_textlayer_2, GColorBlack);
-	text_layer_set_text_color(s_textlayer_2, GColorWhite);
-	text_layer_set_text_alignment(s_textlayer_2, GTextAlignmentCenter);
-	text_layer_set_font(s_textlayer_2, s_res_gothic_28_bold);
-	layer_add_child(window_get_root_layer(s_window), (Layer *)s_textlayer_2);
-
-	// s_textlayer_4
+	// current goal
 	s_textlayer_4 = text_layer_create(GRect(0, 143, 144, 20));
 	text_layer_set_background_color(s_textlayer_4, GColorBlack);
 	text_layer_set_text_color(s_textlayer_4, GColorWhite);

@@ -8,6 +8,8 @@ static GFont s_res_gothic_28_bold;
 static GFont s_res_gothic_24_bold;
 static Layer *s_window_layer;
 static Layer *s_progress_layer;
+static GBitmap *s_res_image;
+static BitmapLayer *s_bitmaplayer_1;
 static TextLayer *s_textlayer_2;
 static TextLayer *s_textlayer_3;
 StatusBarLayer *status_bar_layer;
@@ -16,9 +18,10 @@ StatusBarLayer *status_bar_layer;
 extern int steps;
 extern int goal;
 
+// Local variables for text displaying
 static char buffer1[16];
 static char buffer2[16];
-static char testbuffer[25];
+static char finalbuffer[25];
 
 // Action to do when Select Button is clicked
 static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
@@ -127,8 +130,8 @@ static void progress_layer_update_proc(Layer *layer, GContext *ctx) {
 	text_layer_set_text(s_textlayer_2, buffer1);
 
 	display_value(goal, buffer2);
-	snprintf(testbuffer, sizeof(testbuffer), "%s %s", "Current goal:", buffer2);
-	text_layer_set_text(s_textlayer_3, testbuffer);
+	snprintf(finalbuffer, sizeof(finalbuffer), "%s %s", "Current goal:", buffer2);
+	text_layer_set_text(s_textlayer_3, finalbuffer);
 }
 
 // Init function called when the window is created
@@ -142,7 +145,6 @@ static void initialise_ui(void) {
 #endif
 
 	s_res_gothic_28_bold = fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD);
-	s_res_gothic_24_bold = fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD);
 
 	// status bar
 	status_bar_layer = status_bar_layer_create();
@@ -150,6 +152,12 @@ static void initialise_ui(void) {
 	status_bar_layer_set_separator_mode(status_bar_layer, StatusBarLayerSeparatorModeDotted);
 	layer_add_child(s_window_layer, (Layer *)status_bar_layer);
 
+  // footprint image
+  s_res_image = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_FOOTPRINT_36);
+  s_bitmaplayer_1 = bitmap_layer_create(GRect(53, 84, 36, 36));
+  bitmap_layer_set_bitmap(s_bitmaplayer_1, s_res_image);
+  layer_add_child(s_window_layer, (Layer *)s_bitmaplayer_1);
+  
 	// progress bar
 	s_progress_layer = layer_create(GRect(0, 7, 144, 150));
 	layer_set_update_proc(s_progress_layer, progress_layer_update_proc);
