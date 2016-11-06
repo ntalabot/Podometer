@@ -5,6 +5,12 @@
 
 #define MAX_SELECTION_LAYER_CELLS 1
 
+/* THIS FILE IS GREATLY INSPIRED OF THE CODE IN THE FOLLOWING LINK
+ * http://www.mediafire.com/file/btramcjbtnq1a9w/pinentrytestmodification.zip  
+ *
+ * File used in goal_window.c and size_window.c to create the interface and the button animation 
+ */
+
 typedef char* (*SelectionLayerGetCellText)(int index, void *context);
 
 typedef void(*SelectionLayerCompleteCallback)(void *context);
@@ -26,7 +32,7 @@ typedef struct SelectionLayerData {
 	int cell_padding;
 	int selected_cell_idx;
 
-	// If is_active = false the the selected cell will become invalid, and any clicks will be ignored
+	// If is_active = false the selected cell will become invalid, and any clicks will be ignored
 	bool is_active;
 
 	GFont font;

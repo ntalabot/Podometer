@@ -12,11 +12,18 @@
 #define BUTTON_HOLD_REPEAT_MS 100
 #define SETTLE_HEIGHT_DIFF 6
 
-// Animation
+// Defines for animation
 #define BUMP_TEXT_DURATION_MS 107
 #define BUMP_SETTLE_DURATION_MS 214
 #define SLIDE_DURATION_MS 107
 #define SLIDE_SETTLE_DURATION_MS 179
+
+
+/* THIS FILE IS GREATLY INSPIRED OF THE CODE IN THE FOLLOWING LINK
+ * http://www.mediafire.com/file/btramcjbtnq1a9w/pinentrytestmodification.zip  
+ *
+ * File used in goal_window.c and size_window.c to create the interface and the button animation 
+ */
 
 // Function prototypes
 static Animation* prv_create_bump_settle_animation(Layer *layer);
@@ -128,8 +135,6 @@ static void prv_draw_slider_slide(Layer *layer, GContext *ctx) {
 		current_x_offset -= current_cell_width_change;
 	}
 
-	GRect rect = GRect(current_x_offset, 0, current_cell_width, layer_get_bounds(layer).size.h);
-
 #ifdef PBL_COLOR
 	graphics_context_set_fill_color(ctx, data->active_background_color);
 	graphics_fill_rect(ctx, rect, 1, GCornerNone);
@@ -229,19 +234,19 @@ static void prv_draw_selection_layer(Layer *layer, GContext *ctx) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-//! Increment / Decrement Animation
+// Increment/Decrement Animation
 
-//! This animation causes a the active cell to "bump" when the user presses the up button.
-//! This animation has two parts:
-//! 1) The "text to cell edge"
-//! 2) The "background settle"
+// This animation causes the active cell to "bump" when the user presses the up button.
+// This animation has two parts:
+// 1) The "text to cell edge"
+// 2) The "background settle"
 
-//! The "text to cell edge" (bump_text) moves the text until it hits the top / bottom of the cell.
+// The "text to cell edge" (bump_text) moves the text until it hits the top / bottom of the cell.
 
-//! The "background settle" (bump_settle) is a reaction to the "text to cell edge" animation.
-//! The top of the cell immediately expands down giving the impression that the text "pushed" the
-//! cell making it bigger. The cell then shrinks / settles back to its original height
-//! with the text vertically centered
+// The "background settle" (bump_settle) is a reaction to the "text to cell edge" animation.
+// The top of the cell immediately expands down giving the impression that the text "pushed" the
+// cell making it bigger. The cell then shrinks / settles back to its original height
+// with the text vertically centered
 
 static void prv_bump_text_impl(struct Animation *animation, const AnimationProgress distance_normalized) {
 	Layer *layer = (Layer*)animation_get_context(animation);
@@ -342,19 +347,19 @@ static void prv_run_value_change_animation(Layer *layer) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-//! Slide Animation
+// Slide Animation
 
-//! This animation moves the "selection box" (active color) to the next cell to the right.
-//! This animation has two parts:
-//! 1) The "move and expand"
-//! 2) The "settle"
+// This animation moves the "selection box" (active color) to the next cell to the right.
+// This animation has two parts:
+// 1) The "move and expand"
+// 2) The "settle"
 
-//! The "move and expand" (slide) moves the selection box from the currently active cell to
-//! the next cell to the right. At the same time the width is changed to be the size of the
-//! next cell plus the size of the padding. This creates an overshoot effect.
+// The "move and expand" (slide) moves the selection box from the currently active cell to
+// the next cell to the right. At the same time the width is changed to be the size of the
+// next cell plus the size of the padding. This creates an overshoot effect.
 
-//! The "settle" (slide_settle) removes the extra width that was added in the "move and expand"
-//! step.
+// The "settle" (slide_settle) removes the extra width that was added in the "move and expand"
+// step.
 
 static void prv_slide_impl(struct Animation *animation, const AnimationProgress distance_normalized) {
 	Layer *layer = (Layer*)animation_get_context(animation);
