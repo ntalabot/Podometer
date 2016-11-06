@@ -40,7 +40,7 @@ static uint16_t step_count(short *samples) {
 	int16_t sign1, sign2;
 	int16_t min_threshold = 100;
 	int16_t max_threshold = 1000;
-	float max_distance_ratio = 0.1;
+	float max_distance_ratio = 0.8;
 
 	// Count and store number of edges (extremums) in the signal
 	for (int i = 0; i < 10; ++i)
@@ -54,8 +54,8 @@ static uint16_t step_count(short *samples) {
 		{
 			edges[num_edges] = samples[i + 9];
 			num_edges++;
-			if (num_edges == 1) // If this is the first edge of our filtered signal, we just compare it to 0
-				differences[num_edges-1] = edges[num_edges-1];
+			if (num_edges == 1) // If this is the first edge of our filtered signal, we don't consider it
+				differences[num_edges-1] = 0;
 			else { // Otherwise we take the difference between it and the previous edge
 				differences[num_edges-1] = abs(edges[num_edges-1] - edges[num_edges - 2]);
 				// Store biggest difference in this data set
