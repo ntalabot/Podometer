@@ -27,7 +27,7 @@ Date: 05.11.2016
 // Declare the global variable used for the person's informations
 int size = 170;
 int steps = 0;
-int goal = 10000;
+int goal = 50000;
 float gender = FEMALE;
 
 // Given the filtered samples for the steps, returns the number of steps counted

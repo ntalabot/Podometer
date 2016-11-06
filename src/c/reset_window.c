@@ -20,9 +20,7 @@ static void up_click_handler(ClickRecognizerRef recognizer, void *context)
 
 // Down click configuration
 static void down_click_handler(ClickRecognizerRef recognizer, void *context)
-{
-	window_stack_remove(s_main_window, true);
-}
+{  window_stack_remove(s_main_window, true);  }
 
 
 static void click_config_provider(void *context)
@@ -30,7 +28,6 @@ static void click_config_provider(void *context)
 	window_single_click_subscribe(BUTTON_ID_UP, up_click_handler);
 	window_single_click_subscribe(BUTTON_ID_DOWN, down_click_handler);
 }
-
 
 static void window_load(Window *window) {
 	Layer *window_layer = window_get_root_layer(window);
@@ -71,6 +68,7 @@ static void window_unload(Window *window)
 	s_main_window = NULL;
 }
 
+//   Push the window onto the stack
 void reset_window_push()
 {
 	if (!s_main_window) {

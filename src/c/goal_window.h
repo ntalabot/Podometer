@@ -3,8 +3,11 @@
 
 #include <pebble.h>
 
-#define NUM_CELLS 1    // -> aussi changer dans layer.h le nombre max de cells
-#define MAX_GOAL_VALUE 32000
+/* THIS FILE IS GREATLY INSPIRED OF THE CODE IN THE FOLLOWING LINK
+http://www.mediafire.com/file/btramcjbtnq1a9w/pinentrytestmodification.zip  */
+
+#define NUM_CELLS 1            
+#define MAX_GOAL_VALUE 50000
 
 typedef struct {
 	int digits[NUM_CELLS];
@@ -31,44 +34,22 @@ typedef struct {
 	int8_t field_selection;
 } GoalWindow;
 
-/*
-* Creates a new PinWindow in memory but does not push it into view
-*  goal_window_callbacks: callbacks for communication
-*  returns: a pointer to a new PinWindow structure
-*/
+// Creates the GoalWindow in memory but does not push it into view
 GoalWindow* goal_window_create(GoalWindowCallbacks goal_window_callbacks);
 
-/*
-* Destroys an existing PinWindow
-*  goal_window: a pointer to the GoalWindow being destroyed
-*/
+// Destroys the GoalWindow
 void goal_window_destroy(GoalWindow *goal_window);
 
-/*
-* Push the window onto the stack
-*  goal_window: a pointer to the GoalWindow being pushed
-*  animated: whether to animate the push or not
-*/
+// Push the window onto the stack
 void goal_window_push(GoalWindow *goal_window, bool animated);
 
-/*
-* Pop the window off the stack
-*  goal_window: a pointer to the GoalWindow to pop
-*  animated: whether to animate the pop or not
-*/
+// Pop the window off the stack
 void goal_window_pop(GoalWindow *goal_window, bool animated);
 
-/*
-* Gets whether it is the topmost window or not
-*  goal_window: a pointer to the GoalWindow being checked
-*  returns: a boolean indicating if it is the topmost window
-*/
+// Gets whether it is the topmost window or not
 bool goal_window_get_topmost_window(GoalWindow *goal_window);
 
-/*
-* Sets the over-all color scheme of the window
-*  color: the GColor to set the highlight to
-*/
+// Sets the over-all color scheme of the window
 void goal_window_set_highlight_color(GoalWindow *goal_window, GColor color);
 
 #endif

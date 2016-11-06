@@ -6,7 +6,7 @@
 #include "welcome_window.h"
 #include "reset_window.h"
 
-#define NUM_WINDOWS_MENU 4
+#define NUM_WINDOWS_MENU 4    // Goal, Gender, Size and Reset rows
 
 extern int size;
 extern int goal;
@@ -16,33 +16,29 @@ static Window *s_window;
 static MenuLayer *menu_layer;
 static TextLayer *s_text_layer;
 
-// SIZE WINDOW Sauvegarde taille + retour menu layer
-static void size_complete_callback(PIN pin, void *context) {
+// SIZE WINDOW Save the size and return to menu window
+static void size_complete_callback(PIN pin, void *context) 
+{
 	size = pin.digits[0];
 	APP_LOG(APP_LOG_LEVEL_INFO, "Size is %d", size);
 	size_window_pop((SizeWindow*)context, true);
 }
 
-// GOAL WINDOW Sauvegarde l'objectif + retour menu layer
-static void goal_complete_callback(GOALS goals, void *context) {
+// GOAL WINDOW Save the goal and return to menu window
+static void goal_complete_callback(GOALS goals, void *context) 
+{
 	goal = goals.digits[0];
 	APP_LOG(APP_LOG_LEVEL_INFO, "Goal is %d", goal);
 	goal_window_pop((GoalWindow*)context, true);
 }
 
-
 // Give the total number of rows
 static uint16_t num_rows_callback(MenuLayer *menu_layer, uint16_t section_index, void *callback_context)
-{
-	return NUM_WINDOWS_MENU;
-}
+{  return NUM_WINDOWS_MENU;  }
 
-
-// Draw the layout inside the menu item
+// Create the rows
 static void draw_row_callback(GContext *ctx, Layer *cell_layer, MenuIndex *cell_index, void *callback_context)
 {
-
-	//Which row is it?
 	switch (cell_index->row)
 	{
 	case 0:
@@ -60,37 +56,27 @@ static void draw_row_callback(GContext *ctx, Layer *cell_layer, MenuIndex *cell_
 	}
 }
 
-
-// Decide what happens when the selected button is pressed
+// Callback function when a row is selected
 void select_click_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *callback_context)
 {
 	switch (cell_index->row)
 	{
-	case 0:      //open the goal menu
-	{
-		GoalWindow *goal_window = goal_window_create((GoalWindowCallbacks) {
-			.goal_complete = goal_complete_callback
-		});
-		goal_window_push(goal_window, true);
-		break;
-	}
-	case 1:
-		gender_window_push();
-		break;
-	case 2:       //open the size menu
-	{
-		SizeWindow *size_window = size_window_create((SizeWindowCallbacks) {
-			.size_complete = size_complete_callback
-		});
-		size_window_push(size_window, true);
-		break;
-	}
-	case 3:
-		reset_window_push();
-		break;
+	  case 0:      //Open the goal window
+	  { GoalWindow *goal_window = goal_window_create((GoalWindowCallbacks) { .goal_complete = goal_complete_callback	});
+  		goal_window_push(goal_window, true);
+	  	break; }
+  	case 1:      //Open the gender window
+    { gender_window_push();
+     break;  }
+  	case 2:      //Open the size window
+  	{ SizeWindow *size_window = size_window_create((SizeWindowCallbacks) { .size_complete = size_complete_callback	});
+		  size_window_push(size_window, true);
+		  break;  }
+	  case 3:      //Open the reset window
+	  {	reset_window_push();
+      break;  }
 	}
 }
-
 
 // BEGIN AUTO-GENERATED UI CODE; DO NOT MODIFY
 //static Window *s_window;
@@ -104,6 +90,7 @@ void select_click_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *c
 //  window_single_click_subscribe(BUTTON_ID_BACK, back_click_handler);
 //}
 
+// Create the layout 
 static void initialise_ui(void) {
 	s_window = window_create();
 #ifndef PBL_SDK_3
@@ -119,7 +106,7 @@ static void initialise_ui(void) {
 	text_layer_set_text_alignment(s_text_layer, GTextAlignmentCenter);
 	layer_add_child(window_get_root_layer(s_window), text_layer_get_layer(s_text_layer));
 
-	//Create it - 12 is approx height of the top bar
+  // Rows layout
 	menu_layer = menu_layer_create(GRect(0, 18, 144, 168));
 	menu_layer_set_normal_colors(menu_layer, GColorBlack, GColorWhite);
 	menu_layer_set_highlight_colors(menu_layer, GColorWhite, GColorBlack);
@@ -128,7 +115,7 @@ static void initialise_ui(void) {
 	menu_layer_set_click_config_onto_window(menu_layer, s_window);
 	//window_set_click_config_provider(s_window, click_config_provider);
 
-	//Give it its callbacks
+	//Set the callbacks
 	MenuLayerCallbacks callbacks = {
 		.draw_row = (MenuLayerDrawRowCallback)draw_row_callback,
 		.get_num_rows = (MenuLayerGetNumberOfRowsInSectionsCallback)num_rows_callback,

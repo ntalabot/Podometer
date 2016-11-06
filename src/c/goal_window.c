@@ -2,7 +2,10 @@
 #include "goal_window.h"
 #include "layers_selection.h"
 
-extern int goal;  // vérifier nom avec Quentin
+/* THIS FILE IS GREATLY INSPIRED OF THE CODE IN THE FOLLOWING LINK
+http://www.mediafire.com/file/btramcjbtnq1a9w/pinentrytestmodification.zip  */
+
+extern int goal;
 
 static char* selection_handle_get_text(int index, void *context)
 {
@@ -30,7 +33,7 @@ static void selection_handle_inc(int index, uint8_t clicks, void *context)
 	}
 }
 
-// Size decrementing
+// Goal decrementing
 static void selection_handle_dec(int index, uint8_t clicks, void *context)
 {
 	GoalWindow *goal_window = (GoalWindow*)context;
@@ -41,7 +44,7 @@ static void selection_handle_dec(int index, uint8_t clicks, void *context)
 	}
 }
 
-// Size window creation
+// Goal window creation
 GoalWindow* goal_window_create(GoalWindowCallbacks callbacks)
 {
 	GoalWindow *goal_window = (GoalWindow*)malloc(sizeof(GoalWindow));
@@ -73,12 +76,12 @@ GoalWindow* goal_window_create(GoalWindowCallbacks callbacks)
 
 			// Create selection layer
 			goal_window->selection = selection_layer_create(GRect(10, 75, 80, 30), NUM_CELLS);
-			selection_layer_set_cell_width(goal_window->selection, 0, 120); // taille largeur
+			selection_layer_set_cell_width(goal_window->selection, 0, 120);
 			selection_layer_set_cell_padding(goal_window->selection, 10);
 			selection_layer_set_active_bg_color(goal_window->selection, GColorDarkGray);
-			//selection_layer_set_inactive_bg_color(goal_window->selection, GColorClear);
 			selection_layer_set_click_config_onto_window(goal_window->selection, goal_window->window);
 
+      // Set callbacks
 			selection_layer_set_callbacks(goal_window->selection, goal_window, (SelectionLayerCallbacks)
 			{
 				.get_cell_text = selection_handle_get_text,
@@ -86,7 +89,9 @@ GoalWindow* goal_window_create(GoalWindowCallbacks callbacks)
 				.increment = selection_handle_inc,
 				.decrement = selection_handle_dec,
 			});
-			layer_add_child(window_get_root_layer(goal_window->window), goal_window->selection);
+			
+      // Add to window
+      layer_add_child(window_get_root_layer(goal_window->window), goal_window->selection);
 			return goal_window;
 		}
 	}
@@ -95,6 +100,7 @@ GoalWindow* goal_window_create(GoalWindowCallbacks callbacks)
 	return NULL;
 }
 
+// Goal window destruction
 void goal_window_destroy(GoalWindow *goal_window)
 {
 	if (goal_window)
@@ -107,21 +113,16 @@ void goal_window_destroy(GoalWindow *goal_window)
 		return;
 	}
 }
-
+// Display the goal window
 void goal_window_push(GoalWindow *goal_window, bool animated)
-{
-	window_stack_push(goal_window->window, animated);
-}
+{  window_stack_push(goal_window->window, animated);  }
 
+// Remove the goal window
 void goal_window_pop(GoalWindow *goal_window, bool animated)
-{
-	window_stack_remove(goal_window->window, animated);
-}
+{  window_stack_remove(goal_window->window, animated);  }
 
 bool goal_window_get_topmost_window(GoalWindow *goal_window)
-{
-	return window_stack_get_top_window() == goal_window->window;
-}
+{  return window_stack_get_top_window() == goal_window->window;  }
 
 void goal_window_set_highlight_color(GoalWindow *goal_window, GColor color)
 {

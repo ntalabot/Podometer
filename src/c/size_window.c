@@ -2,6 +2,9 @@
 #include "size_window.h"
 #include "layers_selection.h"
 
+/* THIS FILE IS GREATLY INSPIRED OF THE CODE IN THE FOLLOWING LINK
+http://www.mediafire.com/file/btramcjbtnq1a9w/pinentrytestmodification.zip  */
+
 extern int size;
 
 static char* selection_handle_get_text(int index, void *context)
@@ -24,7 +27,7 @@ static void selection_handle_inc(int index, uint8_t clicks, void *context)
 {
 	SizeWindow *size_window = (SizeWindow*)context;
 	size_window->pin.digits[index]++;
-	if (size_window->pin.digits[index] > MAX_VALUE)
+	if (size_window->pin.digits[index] > MAX_SIZE)
 	{
 		size_window->pin.digits[index] = 0;
 	}
@@ -37,7 +40,7 @@ static void selection_handle_dec(int index, uint8_t clicks, void *context)
 	size_window->pin.digits[index]--;
 	if (size_window->pin.digits[index] < 0)
 	{
-		size_window->pin.digits[index] = MAX_VALUE;
+		size_window->pin.digits[index] = MAX_SIZE;
 	}
 }
 
@@ -75,9 +78,9 @@ SizeWindow* size_window_create(SizeWindowCallbacks callbacks) {
 			selection_layer_set_cell_width(size_window->selection, 0, 80); // taille largeur
 			selection_layer_set_cell_padding(size_window->selection, 10);
 			selection_layer_set_active_bg_color(size_window->selection, GColorDarkGray);
-			//selection_layer_set_inactive_bg_color(size_window->selection, GColorDarkGray);
 			selection_layer_set_click_config_onto_window(size_window->selection, size_window->window);
-
+    
+      // Set callbacks
 			selection_layer_set_callbacks(size_window->selection, size_window, (SelectionLayerCallbacks)
 			{
 				.get_cell_text = selection_handle_get_text,
@@ -85,6 +88,8 @@ SizeWindow* size_window_create(SizeWindowCallbacks callbacks) {
 					.increment = selection_handle_inc,
 					.decrement = selection_handle_dec,
 			});
+      
+      // Add to window
 			layer_add_child(window_get_root_layer(size_window->window), size_window->selection);
 			return size_window;
 		}
@@ -107,20 +112,16 @@ void size_window_destroy(SizeWindow *size_window)
 	}
 }
 
+// Push the window onto the stack
 void size_window_push(SizeWindow *size_window, bool animated)
-{
-	window_stack_push(size_window->window, animated);
-}
+{  	window_stack_push(size_window->window, animated);  }
 
+// Push the window off the stack
 void size_window_pop(SizeWindow *size_window, bool animated)
-{
-	window_stack_remove(size_window->window, animated);
-}
+{  window_stack_remove(size_window->window, animated);  }
 
 bool size_window_get_topmost_window(SizeWindow *size_window)
-{
-	return window_stack_get_top_window() == size_window->window;
-}
+{  return window_stack_get_top_window() == size_window->window;  }
 
 void size_window_set_highlight_color(SizeWindow *size_window, GColor color)
 {

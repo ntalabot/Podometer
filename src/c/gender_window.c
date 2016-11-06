@@ -1,6 +1,9 @@
 #include <pebble.h>
 #include "gender_window.h"
 
+/* THIS FILE IS INSPIRED OF THE CODE IN THE FOLLOWING LINK
+https://github.com/pebble-examples/ui-patterns  */
+
 extern float gender;
 
 static Window *s_main_window;
@@ -9,11 +12,10 @@ static MenuLayer *s_menu_layer;
 static int s_current_selection = 0;
 
 // Give the total number of rows
-static uint16_t get_num_rows_callback(MenuLayer *menu_layer, uint16_t section_index, void *context) {
-	return GENDER_WINDOW_NUM_ROWS;
-}
+static uint16_t get_num_rows_callback(MenuLayer *menu_layer, uint16_t section_index, void *context) 
+{  return GENDER_WINDOW_NUM_ROWS;  }
 
-// Draw the layout
+// Create the layout
 static void draw_row_callback(GContext *ctx, const Layer *cell_layer, MenuIndex *cell_index, void *context)
 {
 	switch (cell_index->row)
@@ -56,12 +58,10 @@ static int16_t get_cell_height_callback(struct MenuLayer *s_menu_layer, MenuInde
 		MENU_CELL_ROUND_FOCUSED_SHORT_CELL_HEIGHT : MENU_CELL_ROUND_UNFOCUSED_TALL_CELL_HEIGHT, 44);
 }
 
-// Decide what happens when the selected button is pressed
+// Callback function when a row is selected
 static void select_callback(struct MenuLayer *menu_layer, MenuIndex *cell_index, void *callback_context) {
 	if (cell_index->row == GENDER_WINDOW_NUM_ROWS)
-	{
-		window_stack_pop(true);
-	}
+	{	window_stack_pop(true);  }
 	else  // Change selection
 	{
 		s_current_selection = cell_index->row;
@@ -78,7 +78,8 @@ static void select_callback(struct MenuLayer *menu_layer, MenuIndex *cell_index,
 		gender = MALE;
 		APP_LOG(APP_LOG_LEVEL_INFO, "male");
 	}
-	window_stack_remove(s_main_window, true);
+
+  gender_window_pop ();
 }
 
 static void window_load(Window *window) {
@@ -103,6 +104,7 @@ static void window_unload(Window *window) {
 	s_main_window = NULL;
 }
 
+// Push the window onto the stack
 void gender_window_push() {
 	if (!s_main_window) {
 		s_main_window = window_create();
@@ -113,3 +115,7 @@ void gender_window_push() {
 	}
 	window_stack_push(s_main_window, true);
 }
+
+// Pop the window off the stack
+void gender_window_pop ()
+{ window_stack_remove(s_main_window, true);   }
