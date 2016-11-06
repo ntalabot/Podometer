@@ -38,9 +38,9 @@ static uint16_t step_count(short *samples) {
 	int16_t differences[SIZE_DATA];
 	int16_t max_difference = 0;
 	int16_t sign1, sign2;
-	int16_t min_threshold = 100;
+	int16_t min_threshold = 200;
 	int16_t max_threshold = 1000;
-	float max_distance_ratio = 0.8;
+	float max_distance_ratio = 0.6;
 
 	// Count and store number of edges (extremums) in the signal
 	for (int i = 0; i < 10; ++i)
@@ -71,8 +71,8 @@ static uint16_t step_count(short *samples) {
 		if ((differences[i] > min_threshold) && (differences[i] < max_threshold) && (differences[i] > (int16_t)(max_distance_ratio*(float)max_difference)))
 			num_steps += 1;
 	}
-
-	return num_steps;
+  // Return 2 times the calculated number to try to compensate the problems with FFT
+	return 2*num_steps;
 }
 
 /*Function that low-pass filters given sample array.
