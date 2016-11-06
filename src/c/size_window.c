@@ -5,10 +5,10 @@
 /* THIS FILE IS GREATLY INSPIRED OF THE CODE IN THE FOLLOWING LINK
 http://www.mediafire.com/file/btramcjbtnq1a9w/pinentrytestmodification.zip  */
 
+// Global variables for the person's infos, declared in main.c
 extern int size;
 
-static char* selection_handle_get_text(int index, void *context)
-{
+static char* selection_handle_get_text(int index, void *context) {
 	SizeWindow *size_window = (SizeWindow*)context;
 	snprintf(
 		size_window->field_buffs[index],
@@ -16,29 +16,26 @@ static char* selection_handle_get_text(int index, void *context)
 	return size_window->field_buffs[index];
 }
 
-static void selection_handle_complete(void *context)
-{
+static void selection_handle_complete(void *context) {
 	SizeWindow *size_window = (SizeWindow*)context;
 	size_window->callbacks.size_complete(size_window->pin, size_window);
 }
 
 // Size incementing
-static void selection_handle_inc(int index, uint8_t clicks, void *context)
-{
+static void selection_handle_inc(int index, uint8_t clicks, void *context) {
 	SizeWindow *size_window = (SizeWindow*)context;
 	size_window->pin.digits[index]++;
 	if (size_window->pin.digits[index] > MAX_SIZE)
 	{
-		size_window->pin.digits[index] = 0;
+		size_window->pin.digits[index] = MIN_SIZE;
 	}
 }
 
 // Size decrementing
-static void selection_handle_dec(int index, uint8_t clicks, void *context)
-{
+static void selection_handle_dec(int index, uint8_t clicks, void *context) {
 	SizeWindow *size_window = (SizeWindow*)context;
 	size_window->pin.digits[index]--;
-	if (size_window->pin.digits[index] < 0)
+	if (size_window->pin.digits[index] < MIN_SIZE)
 	{
 		size_window->pin.digits[index] = MAX_SIZE;
 	}
@@ -99,8 +96,8 @@ SizeWindow* size_window_create(SizeWindowCallbacks callbacks) {
 	return NULL;
 }
 
-void size_window_destroy(SizeWindow *size_window)
-{
+// Destroys the SizeWindow
+void size_window_destroy(SizeWindow *size_window) {
 	if (size_window)
 	{
 		selection_layer_destroy(size_window->selection);
@@ -113,18 +110,22 @@ void size_window_destroy(SizeWindow *size_window)
 }
 
 // Push the window onto the stack
-void size_window_push(SizeWindow *size_window, bool animated)
-{  	window_stack_push(size_window->window, animated);  }
+void size_window_push(SizeWindow *size_window, bool animated) { 
+  window_stack_push(size_window->window, animated); 
+}
 
 // Push the window off the stack
-void size_window_pop(SizeWindow *size_window, bool animated)
-{  window_stack_remove(size_window->window, animated);  }
+void size_window_pop(SizeWindow *size_window, bool animated) {  
+  window_stack_remove(size_window->window, animated);  
+}
 
-bool size_window_get_topmost_window(SizeWindow *size_window)
-{  return window_stack_get_top_window() == size_window->window;  }
+// Gets whether it is the topmost window or not
+bool size_window_get_topmost_window(SizeWindow *size_window) {
+  return window_stack_get_top_window() == size_window->window;  
+}
 
-void size_window_set_highlight_color(SizeWindow *size_window, GColor color)
-{
+// Sets the over-all color scheme of the window
+void size_window_set_highlight_color(SizeWindow *size_window, GColor color) {
 	size_window->highlight_color = color;
 	selection_layer_set_active_bg_color(size_window->selection, color);
 }

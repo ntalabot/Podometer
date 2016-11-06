@@ -12,9 +12,10 @@ static TextLayer *s_textlayer_2;
 static TextLayer *s_textlayer_3;
 StatusBarLayer *status_bar_layer;
 
-// Variables
+// Global variables for the person's infos, declared in main.c
 extern int steps;
 extern int goal;
+
 static char buffer1[16];
 static char buffer2[16];
 static char testbuffer[25];
@@ -51,7 +52,6 @@ static void display_value(uint16_t value, char buffer[]) {
 
 // Update routine for the progress bar
 static void progress_layer_update_proc(Layer *layer, GContext *ctx) {
-	APP_LOG(APP_LOG_LEVEL_INFO, "progress update");
 	GRect inset;
 
 	// If the current goal is overpassed, the progress bar continues with another color
@@ -91,7 +91,7 @@ static void progress_layer_update_proc(Layer *layer, GContext *ctx) {
 		graphics_fill_radial(ctx, inset, GOvalScaleModeFitCircle, 7, trigangle - line_width_trigangle, trigangle);
 
 	}
-	else {
+	else { // Or display the simple progress bar toward goal
 		// progress bar
 		inset = grect_inset(layer_get_bounds(layer), GEdgeInsets(16));
 		graphics_context_set_fill_color(ctx, GColorDarkGray);
@@ -122,7 +122,7 @@ static void progress_layer_update_proc(Layer *layer, GContext *ctx) {
 		graphics_fill_radial(ctx, inset, GOvalScaleModeFitCircle, 8, trigangle - line_width_trigangle, trigangle);
 	}
 
-	// Update text_layers
+	// Update the text layers (steps and goal)
 	display_value(steps, buffer1);
 	text_layer_set_text(s_textlayer_2, buffer1);
 
@@ -131,10 +131,10 @@ static void progress_layer_update_proc(Layer *layer, GContext *ctx) {
 	text_layer_set_text(s_textlayer_3, testbuffer);
 }
 
+// Init function called when the window is created
 static void initialise_ui(void) {
 	s_window = window_create();
 	s_window_layer = window_get_root_layer(s_window);
-	//GRect window_bounds = layer_get_bounds(s_window_layer);
 	window_set_click_config_provider(s_window, click_config_provider);    // buttons interactions
 	window_set_background_color(s_window, GColorBlack);
 #ifndef PBL_SDK_3
@@ -159,8 +159,6 @@ static void initialise_ui(void) {
 	s_textlayer_2 = text_layer_create(GRect(41, 48, 62, 30));
 	text_layer_set_background_color(s_textlayer_2, GColorBlack);
 	text_layer_set_text_color(s_textlayer_2, GColorWhite);
-	//display_value(steps, buffer1);
-	//text_layer_set_text(s_textlayer_2, buffer1);
 	text_layer_set_font(s_textlayer_2, s_res_gothic_28_bold);
 	text_layer_set_text_alignment(s_textlayer_2, GTextAlignmentCenter);
 	layer_add_child(s_window_layer, (Layer *)s_textlayer_2);
@@ -169,14 +167,12 @@ static void initialise_ui(void) {
 	s_textlayer_3 = text_layer_create(GRect(0, 143, 144, 20));
 	text_layer_set_background_color(s_textlayer_3, GColorBlack);
 	text_layer_set_text_color(s_textlayer_3, GColorWhite);
-	//display_value(goal, buffer2);
-	//snprintf(testbuffer, sizeof(testbuffer),"%s %s", "Current goal:", buffer2);
-	//text_layer_set_text(s_textlayer_3, testbuffer);
 	text_layer_set_text_alignment(s_textlayer_3, GTextAlignmentCenter);
 	text_layer_set_font(s_textlayer_3, fonts_get_system_font(FONT_KEY_GOTHIC_14));
 	layer_add_child(window_get_root_layer(s_window), (Layer *)s_textlayer_3);
 }
 
+// Deinit function called when the window is destroyed
 static void destroy_ui(void) {
 	window_destroy(s_window);
 	status_bar_layer_destroy(status_bar_layer);
@@ -189,6 +185,7 @@ static void handle_window_unload(Window* window) {
 	destroy_ui();
 }
 
+// Display the steps window on the Pebble
 void show_steps_window(void) {
 	initialise_ui();
 	window_set_window_handlers(s_window, (WindowHandlers) {
@@ -197,11 +194,13 @@ void show_steps_window(void) {
 	window_stack_push(s_window, true);
 }
 
+// Ask for an update of the steps window to display current values
 void update_steps_window(void) {
-	if (s_window != NULL)
+	if (s_window)
 		layer_mark_dirty(s_progress_layer);
 }
 
+// Hide the steps window, so that another window can be displayed
 void hide_steps_window(void) {
 	window_stack_remove(s_window, true);
 }

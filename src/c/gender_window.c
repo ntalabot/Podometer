@@ -4,6 +4,7 @@
 /* THIS FILE IS INSPIRED OF THE CODE IN THE FOLLOWING LINK
 https://github.com/pebble-examples/ui-patterns  */
 
+// Global variables for the person's infos, declared in main.c
 extern float gender;
 
 static Window *s_main_window;
@@ -12,12 +13,12 @@ static MenuLayer *s_menu_layer;
 static int s_current_selection = 0;
 
 // Give the total number of rows
-static uint16_t get_num_rows_callback(MenuLayer *menu_layer, uint16_t section_index, void *context) 
-{  return GENDER_WINDOW_NUM_ROWS;  }
+static uint16_t get_num_rows_callback(MenuLayer *menu_layer, uint16_t section_index, void *context) {
+  return GENDER_WINDOW_NUM_ROWS;  
+}
 
 // Create the layout
-static void draw_row_callback(GContext *ctx, const Layer *cell_layer, MenuIndex *cell_index, void *context)
-{
+static void draw_row_callback(GContext *ctx, const Layer *cell_layer, MenuIndex *cell_index, void *context) {
 	switch (cell_index->row)
 	{
 	case 0:
@@ -52,8 +53,7 @@ static void draw_row_callback(GContext *ctx, const Layer *cell_layer, MenuIndex 
 
 }
 
-static int16_t get_cell_height_callback(struct MenuLayer *s_menu_layer, MenuIndex *cell_index, void *context)
-{
+static int16_t get_cell_height_callback(struct MenuLayer *s_menu_layer, MenuIndex *cell_index, void *context) {
 	return PBL_IF_ROUND_ELSE(menu_layer_is_index_selected(s_menu_layer, cell_index) ?
 		MENU_CELL_ROUND_FOCUSED_SHORT_CELL_HEIGHT : MENU_CELL_ROUND_UNFOCUSED_TALL_CELL_HEIGHT, 44);
 }
@@ -71,12 +71,10 @@ static void select_callback(struct MenuLayer *menu_layer, MenuIndex *cell_index,
 	if (s_current_selection == 0)  // Female selection
 	{
 		gender = FEMALE;
-		APP_LOG(APP_LOG_LEVEL_INFO, "female");
 	}
 	else
 	{
 		gender = MALE;
-		APP_LOG(APP_LOG_LEVEL_INFO, "male");
 	}
 
   gender_window_pop ();

@@ -8,6 +8,7 @@ http://www.mediafire.com/file/btramcjbtnq1a9w/pinentrytestmodification.zip  */
 
 #define NUM_CELLS 1   
 #define MAX_SIZE 250
+#define MIN_SIZE 70
 
 typedef struct {
 	int digits[NUM_CELLS];
@@ -37,7 +38,7 @@ typedef struct {
 // Creates the SizeWindow in memory but does not push it into view
 SizeWindow* size_window_create(SizeWindowCallbacks size_window_callbacks);
 
-// Destroys the GoalWindow
+// Destroys the SizeWindow
 void size_window_destroy(SizeWindow *size_window);
 
 // Push the window onto the stack

@@ -10,6 +10,7 @@ static TextLayer *s_textlayer_3;
 static TextLayer *s_textlayer_4;
 static BitmapLayer *s_bitmaplayer_1;
 
+// Init function called when the window is created
 static void initialise_ui(void) {
   s_window = window_create();
   #ifndef PBL_SDK_3
@@ -54,6 +55,7 @@ static void initialise_ui(void) {
   layer_add_child(window_get_root_layer(s_window), (Layer *)s_bitmaplayer_1);
 }
 
+// Deinit function called when the window is destroyed
 static void destroy_ui(void) {
   window_destroy(s_window);
   text_layer_destroy(s_textlayer_1);
@@ -68,12 +70,14 @@ static void handle_window_unload(Window* window) {
   destroy_ui();
 }
 
+// Display the welcome window on the Pebble
 void show_welcome_window(void) {
   initialise_ui();
   window_set_window_handlers(s_window, (WindowHandlers) {.unload = handle_window_unload,});
   window_stack_push(s_window, true);
 }
 
+// Hide the welcome window, so that another window can be displayed
 void hide_welcome_window(void) {
   window_stack_remove(s_window, true);
 }

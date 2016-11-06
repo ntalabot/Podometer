@@ -5,10 +5,10 @@
 /* THIS FILE IS GREATLY INSPIRED OF THE CODE IN THE FOLLOWING LINK
 http://www.mediafire.com/file/btramcjbtnq1a9w/pinentrytestmodification.zip  */
 
+// Global variables for the person's infos, declared in main.c
 extern int goal;
 
-static char* selection_handle_get_text(int index, void *context)
-{
+static char* selection_handle_get_text(int index, void *context) {
 	GoalWindow *goal_window = (GoalWindow*)context;
 	snprintf(
 		goal_window->field_buffs[index],
@@ -16,15 +16,13 @@ static char* selection_handle_get_text(int index, void *context)
 	return goal_window->field_buffs[index];
 }
 
-static void selection_handle_complete(void *context)
-{
+static void selection_handle_complete(void *context) {
 	GoalWindow *goal_window = (GoalWindow*)context;
 	goal_window->callbacks.goal_complete(goal_window->goals, goal_window);
 }
 
 // Goal incementing
-static void selection_handle_inc(int index, uint8_t clicks, void *context)
-{
+static void selection_handle_inc(int index, uint8_t clicks, void *context) {
 	GoalWindow *goal_window = (GoalWindow*)context;
 	goal_window->goals.digits[index] = goal_window->goals.digits[index] + 100;
 	if (goal_window->goals.digits[index] > MAX_GOAL_VALUE)
@@ -34,8 +32,7 @@ static void selection_handle_inc(int index, uint8_t clicks, void *context)
 }
 
 // Goal decrementing
-static void selection_handle_dec(int index, uint8_t clicks, void *context)
-{
+static void selection_handle_dec(int index, uint8_t clicks, void *context) {
 	GoalWindow *goal_window = (GoalWindow*)context;
 	goal_window->goals.digits[index] = goal_window->goals.digits[index] - 100;
 	if (goal_window->goals.digits[index] < 100)
@@ -45,8 +42,7 @@ static void selection_handle_dec(int index, uint8_t clicks, void *context)
 }
 
 // Goal window creation
-GoalWindow* goal_window_create(GoalWindowCallbacks callbacks)
-{
+GoalWindow* goal_window_create(GoalWindowCallbacks callbacks) {
 	GoalWindow *goal_window = (GoalWindow*)malloc(sizeof(GoalWindow));
 	if (goal_window) {
 		goal_window->window = window_create();
@@ -96,13 +92,11 @@ GoalWindow* goal_window_create(GoalWindowCallbacks callbacks)
 		}
 	}
 
-	APP_LOG(APP_LOG_LEVEL_ERROR, "Failed to create GoalWindow");
 	return NULL;
 }
 
 // Goal window destruction
-void goal_window_destroy(GoalWindow *goal_window)
-{
+void goal_window_destroy(GoalWindow *goal_window) {
 	if (goal_window)
 	{
 		selection_layer_destroy(goal_window->selection);
@@ -113,6 +107,7 @@ void goal_window_destroy(GoalWindow *goal_window)
 		return;
 	}
 }
+
 // Display the goal window
 void goal_window_push(GoalWindow *goal_window, bool animated)
 {  window_stack_push(goal_window->window, animated);  }
@@ -121,11 +116,12 @@ void goal_window_push(GoalWindow *goal_window, bool animated)
 void goal_window_pop(GoalWindow *goal_window, bool animated)
 {  window_stack_remove(goal_window->window, animated);  }
 
+// Gets whether it is the topmost window or not
 bool goal_window_get_topmost_window(GoalWindow *goal_window)
 {  return window_stack_get_top_window() == goal_window->window;  }
 
-void goal_window_set_highlight_color(GoalWindow *goal_window, GColor color)
-{
+// Sets the over-all color scheme of the window
+void goal_window_set_highlight_color(GoalWindow *goal_window, GColor color) {
 	goal_window->highlight_color = color;
 	selection_layer_set_active_bg_color(goal_window->selection, color);
 }

@@ -8,6 +8,7 @@
 
 #define NUM_WINDOWS_MENU 4    // Goal, Gender, Size and Reset rows
 
+// Global variables for the person's infos, declared in main.c
 extern int size;
 extern int goal;
 extern float gender;
@@ -17,28 +18,24 @@ static MenuLayer *menu_layer;
 static TextLayer *s_text_layer;
 
 // SIZE WINDOW Save the size and return to menu window
-static void size_complete_callback(PIN pin, void *context) 
-{
+static void size_complete_callback(PIN pin, void *context) {
 	size = pin.digits[0];
-	APP_LOG(APP_LOG_LEVEL_INFO, "Size is %d", size);
 	size_window_pop((SizeWindow*)context, true);
 }
 
 // GOAL WINDOW Save the goal and return to menu window
-static void goal_complete_callback(GOALS goals, void *context) 
-{
+static void goal_complete_callback(GOALS goals, void *context) {
 	goal = goals.digits[0];
-	APP_LOG(APP_LOG_LEVEL_INFO, "Goal is %d", goal);
 	goal_window_pop((GoalWindow*)context, true);
 }
 
 // Give the total number of rows
-static uint16_t num_rows_callback(MenuLayer *menu_layer, uint16_t section_index, void *callback_context)
-{  return NUM_WINDOWS_MENU;  }
+static uint16_t num_rows_callback(MenuLayer *menu_layer, uint16_t section_index, void *callback_context) {
+  return NUM_WINDOWS_MENU;  
+}
 
 // Create the rows
-static void draw_row_callback(GContext *ctx, Layer *cell_layer, MenuIndex *cell_index, void *callback_context)
-{
+static void draw_row_callback(GContext *ctx, Layer *cell_layer, MenuIndex *cell_index, void *callback_context) {
 	switch (cell_index->row)
 	{
 	case 0:
@@ -57,8 +54,7 @@ static void draw_row_callback(GContext *ctx, Layer *cell_layer, MenuIndex *cell_
 }
 
 // Callback function when a row is selected
-void select_click_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *callback_context)
-{
+void select_click_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *callback_context) {
 	switch (cell_index->row)
 	{
 	  case 0:      //Open the goal window
@@ -77,18 +73,6 @@ void select_click_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *c
       break;  }
 	}
 }
-
-// BEGIN AUTO-GENERATED UI CODE; DO NOT MODIFY
-//static Window *s_window;
-
-//static void back_click_handler(ClickRecognizerRef recognizer, void *context) {
-//  hide_menu_window();
-//  show_welcome_window();
-//}
-
-//static void click_config_provider(void *context) {
-//  window_single_click_subscribe(BUTTON_ID_BACK, back_click_handler);
-//}
 
 // Create the layout 
 static void initialise_ui(void) {
@@ -127,16 +111,17 @@ static void initialise_ui(void) {
 	layer_add_child(window_get_root_layer(s_window), menu_layer_get_layer(menu_layer));
 }
 
+// Destroy the layout
 static void destroy_ui(void) {
 	window_destroy(s_window);
 	menu_layer_destroy(menu_layer);
 }
-// END AUTO-GENERATED UI CODE
 
 static void handle_window_unload(Window* window) {
 	destroy_ui();
 }
 
+// Display the menu window on the Pebble
 void show_menu_window(void) {
 	initialise_ui();
 	window_set_window_handlers(s_window, (WindowHandlers) {
@@ -145,6 +130,7 @@ void show_menu_window(void) {
 	window_stack_push(s_window, true);
 }
 
+// Hide the menu window, so that another window can be displayed
 void hide_menu_window(void) {
 	window_stack_remove(s_window, true);
 }

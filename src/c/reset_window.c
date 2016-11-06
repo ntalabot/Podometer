@@ -8,23 +8,22 @@ static ActionBarLayer *s_action_bar_layer;
 
 static GBitmap *s_tick_bitmap, *s_cross_bitmap;
 
+// Global variables for the person's infos, declared in main.c
 extern int steps;
 
 // Up click configuration
-static void up_click_handler(ClickRecognizerRef recognizer, void *context)
-{
+static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
 	steps = 0;
-	APP_LOG(APP_LOG_LEVEL_INFO, "Steps = %d", steps);
 	window_stack_remove(s_main_window, true);
 }
 
 // Down click configuration
-static void down_click_handler(ClickRecognizerRef recognizer, void *context)
-{  window_stack_remove(s_main_window, true);  }
+static void down_click_handler(ClickRecognizerRef recognizer, void *context) {  
+  window_stack_remove(s_main_window, true);  
+}
 
-
-static void click_config_provider(void *context)
-{
+// Set the function associated to each buttons
+static void click_config_provider(void *context) {
 	window_single_click_subscribe(BUTTON_ID_UP, up_click_handler);
 	window_single_click_subscribe(BUTTON_ID_DOWN, down_click_handler);
 }
@@ -69,8 +68,7 @@ static void window_unload(Window *window)
 }
 
 //   Push the window onto the stack
-void reset_window_push()
-{
+void reset_window_push(void) {
 	if (!s_main_window) {
 		s_main_window = window_create();
 		window_set_background_color(s_main_window, PBL_IF_COLOR_ELSE(GColorJaegerGreen, GColorWhite));
